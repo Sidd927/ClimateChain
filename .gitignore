@@ -23,3 +23,4 @@ var/
 *.log
 .DS_Store
 .claude/
+docs/design/screenshots/wip*/

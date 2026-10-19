@@ -1,176 +1,126 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api, fmt, short, type Strip } from "../api";
-import { UnitStrip } from "../components/UnitStrip";
-import { Button, ErrorBox, Section } from "../components/ui";
+import { Blocks } from "lucide-react";
+import { api, fmt, short, type ClaimSummary } from "../api";
+import { CopyValue, ErrorBox, LinkButton, OutcomeToken, PageHeader, SectionHeader } from "../components/primitives";
+import { checkOutcome } from "../lib/outcomes";
 
-// Real Verra retirement (Berkeley VROD 2026-08): VCS 1904, batch 18453, units 896,309,560–896,329,558, retired 2026-08-06.
-// The two claims citing it are synthetic.
-const ILLUSTRATION: Strip = {
-  block_index: 0,
-  namespace: "VCS:18453",
-  claim: { unit_start: 896315001, unit_end: 896322000 },
-  records: [{ unit_start: 896309560, unit_end: 896329558, kind: "retirement", event_date: "2026-08-06", beneficiary: null, serial: "18453-896309560-896329558-VCS-VCU-1507-VER-IN-1-1904-01092024-31122024-0" }],
-  others: [{ claim_id: 0, ref: "claim A", claimant: "Northwind Foods", status: "anchored", unit_start: 896309560, unit_end: 896319559 }],
-  domain: [896309560, 896329558],
-};
-
-const EVENT_LABEL: Record<string, string> = {
-  submitted: "Claim submitted",
-  extracted: "Serials extracted",
-  checked: "Checks run",
-  anchored: "Anchored on ledger",
+const CHAIN_EVENT: Record<string, string> = {
+  anchored: "Anchored",
   chain_rejected: "Rejected by contract",
   challenged: "Challenge opened",
-  challenge_upheld: "Challenge upheld, claim revoked",
+  challenge_upheld: "Challenge upheld",
   challenge_dismissed: "Challenge dismissed",
-  withdrawn: "Claim withdrawn",
+  withdrawn: "Withdrawn",
 };
 
 export default function Overview() {
   const [o, setO] = useState<any>(null);
+  const [claims, setClaims] = useState<ClaimSummary[] | null>(null);
   const [err, setErr] = useState<unknown>(null);
-  useEffect(() => { api.overview().then(setO).catch(setErr); }, []);
-  const audit = o?.registry_audit;
-  const vr = audit?.verra_retirements;
-  const gr = audit?.gold_retirements;
-  const ev = o?.evaluation;
+  useEffect(() => {
+    api.overview().then(setO).catch(setErr);
+    api.claims().then(setClaims).catch(() => setClaims([]));
+  }, []);
 
-  return (
-    <div className="space-y-14">
-      <section className="space-y-8">
-        <div className="max-w-3xl space-y-4">
-          <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl">Every retired tonne, claimed once.</h1>
-          <p className="max-w-[64ch] text-lg leading-relaxed text-ink-soft">
-            Carbon registries make sure a credit is retired only once. Nothing checks what happens next: whether the same retired units end up behind two companies' climate claims.
-            OnceOnly reads the serial numbers in a claim's evidence, reconciles them with real registry records, and registers the exact unit ranges on a smart contract that refuses any unit already claimed.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-1">
-            <Link to="/claims/new"><Button>Check a claim</Button></Link>
-            <Link to="/claims"><Button variant="secondary">Open the claims ledger</Button></Link>
-          </div>
-        </div>
+  const attention = (claims ?? []).filter((c) => c.status === "blocked" || c.status === "challenged" || (c.status === "checked" && (c.finding_counts.review ?? 0) > 0));
+  const ready = (claims ?? []).filter((c) => c.status === "checked" && !c.finding_counts.review && !c.finding_counts.blocking);
+  const chainEvents = (o?.recent_chain_events ?? []).filter((e: any) => e.kind in CHAIN_EVENT);
+  const anchored = (o?.claims?.by_status?.anchored ?? 0) + (o?.claims?.by_status?.challenged ?? 0);
+  const ref = o?.reference;
 
-        <div className="rounded-lg border border-rule bg-sheet p-5 sm:p-6">
-          <UnitStrip strip={ILLUSTRATION} thisLabel="Helios Apparel" animate />
-          <p className="mt-4 max-w-[80ch] text-xs leading-relaxed text-muted sm:pl-[10.75rem]">
-            A real Verra retirement of 19,999 units (VCS project 1904, issuance batch 18453, retired 6 Aug 2026) and two synthetic claims that cite overlapping parts of it.
-            Each claim looks fine on its own; only a shared ledger of unit ranges shows that 4,559 units are counted twice.
-          </p>
-        </div>
-      </section>
-
-      <ErrorBox error={err} />
-
-      <Section title="Where double counting slips through">
-        <div className="grid gap-8 md:grid-cols-3">
-          <Fact
-            figure={vr ? `${fmt(vr.overlapping_adjacent_pairs_within_namespace)} overlaps` : "…"}
-            text={vr ? `in ${fmt(vr.rows)} Verra retirement records we parsed. The registry layer is consistent: a unit is retired once.` : "Loading registry audit"}
-          />
-          <Fact
-            figure={vr ? `${(100 - (vr.with_beneficiary / vr.rows) * 100).toFixed(1)}%` : "…"}
-            text="of those retirements record no beneficiary, so the registry often cannot say who is entitled to claim the units."
-          />
-          <Fact
-            figure="One client at a time"
-            text="is how claims are assured today: an auditor sees its client's serials, not whether another company cites the same units. VCMI now requires serial numbers in claims, which makes a shared check possible."
-          />
-        </div>
-        {gr && gr.overlapping_adjacent_pairs_within_namespace > 0 && (
-          <p className="mt-6 max-w-[80ch] text-sm text-ink-soft">
-            In Gold Standard data we found {gr.overlapping_adjacent_pairs_within_namespace} pairs of retirement rows covering the same units, mostly exact duplicate rows in the export.
-            We report these as registry data inconsistencies to clarify, not as double retirement.
-          </p>
-        )}
-      </Section>
-
-      <Section title="How a claim is checked">
-        <ol className="grid gap-x-8 gap-y-6 md:grid-cols-5">
-          {[
-            ["Read the evidence", "Serial numbers are extracted from the certificate or claim document by a deterministic parser; an optional AI pass catches serials in messy layouts and is cross-checked."],
-            ["Reconcile with the registry", "Each serial becomes a unit range in one issuance batch and is matched to real retirement records (Berkeley VROD, 493k rows)."],
-            ["Check the ledger", "The range is compared with every active claim in the same batch. Any shared unit is a potential double use."],
-            ["Anchor on the contract", "ClaimLedger stores the ranges plus hashes of the evidence and report. It rejects overlapping ranges itself."],
-            ["Verify independently", "Anyone can check a claim's on-chain status and confirm a document matches the committed fingerprint."],
-          ].map(([t, d], i) => (
-            <li key={t} className="space-y-1.5">
-              <div className="text-sm font-semibold"><span className="mr-1.5 text-muted">{i + 1}.</span>{t}</div>
-              <p className="text-sm leading-relaxed text-ink-soft">{d}</p>
-            </li>
-          ))}
-        </ol>
-      </Section>
-
-      <Section title="Ledger right now" aside={o?.chain?.address && <span className="text-xs text-muted">ClaimLedger <span className="font-mono">{short(o.chain.address, 8)}</span>{o.chain.public_network === false && " on a local development chain"}</span>}>
-        {o && (
-          <div className="grid gap-8 md:grid-cols-[1fr_1.4fr]">
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
-              <Stat label="Claims anchored" value={fmt((o.claims.by_status.anchored ?? 0) + (o.claims.by_status.challenged ?? 0))} />
-              <Stat label="Units locked by claims" value={fmt(o.claims.units_anchored)} />
-              <Stat label="Claims flagged for double use" value={fmt(o.claims.with_double_use_findings)} />
-              <Stat label="Registrations rejected by the contract" value={fmt(o.claims.chain_rejections)} />
-            </dl>
-            <div>
-              <h3 className="mb-2 text-sm font-semibold">Recent activity</h3>
-              {o.recent_events.length === 0 ? (
-                <p className="text-sm text-muted">No claims yet. <Link to="/claims/new" className="underline">Check the first one</Link>.</p>
-              ) : (
-                <ul className="divide-y divide-rule text-sm">
-                  {o.recent_events.slice(0, 7).map((e: any) => (
-                    <li key={e.id} className="flex flex-wrap items-baseline justify-between gap-x-4 py-1.5">
-                      <span>
-                        <span className={e.kind === "chain_rejected" ? "font-semibold text-crimson" : ""}>{EVENT_LABEL[e.kind] ?? e.kind}</span>
-                        {e.ref && <> · <Link className="underline decoration-rule underline-offset-2 hover:decoration-ink" to={`/claims/${e.claim_id}`}>{e.ref}</Link></>}
-                      </span>
-                      {e.tx_hash && <span className="font-mono text-xs text-muted">block {e.block_number}</span>}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        )}
-      </Section>
-
-      <Section title="Evidence that it works" aside={<Link to="/evaluation" className="text-sm underline underline-offset-4">Full evaluation</Link>}>
-        {ev?.double_use ? (
-          <p className="max-w-[80ch] text-ink-soft">
-            On {fmt(ev.double_use.n)} labelled test claims (synthetic claims citing real registry records), OnceOnly found potential double use with precision{" "}
-            <strong className="text-ink">{ev.double_use.onceonly.precision.toFixed(2)}</strong> and recall <strong className="text-ink">{ev.double_use.onceonly.recall.toFixed(2)}</strong>.
-            A baseline that compares serial strings and document hashes reached recall <strong className="text-ink">{ev.double_use.baseline.recall.toFixed(2)}</strong>: it misses partial overlaps.
-          </p>
-        ) : (
-          <p className="text-sm text-muted">Evaluation results appear here after running <span className="font-mono">make eval</span>.</p>
-        )}
-      </Section>
-
-      <Section title="What OnceOnly does not do">
-        <ul className="grid max-w-[90ch] gap-2 text-sm text-ink-soft md:grid-cols-2">
-          <li>It does not judge credit quality, additionality or permanence.</li>
-          <li>A conflict is a potential double use to review, not proof of fraud.</li>
-          <li>A matching document hash proves the file is unchanged, not that its content is true.</li>
-          <li>It cannot see claims that were never registered on the ledger.</li>
-        </ul>
-      </Section>
-    </div>
-  );
-}
-
-function Fact({ figure, text }: { figure: string; text: string }) {
-  return (
-    <div className="space-y-2">
-      <div className="text-3xl font-bold tracking-tight">{figure}</div>
-      <p className="text-sm leading-relaxed text-ink-soft">{text}</p>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs text-muted">{label}</dt>
-      <dd className="text-2xl font-bold tracking-tight">{value}</dd>
+      <PageHeader title="Overview" lede="The current state of the claims ledger, the registry reference and the contract it writes to." actions={<LinkButton to="/claims" variant="secondary">Open the claims ledger</LinkButton>} />
+      <ErrorBox error={err} title="Could not load the overview" />
+
+      <dl className="mb-10 grid grid-cols-2 gap-px overflow-hidden rounded-sheet border border-rule bg-rule md:grid-cols-4">
+        {[
+          ["Claims anchored", fmt(anchored), "Locking units on ClaimLedger"],
+          ["Units locked", fmt(o?.claims?.units_anchored), "Across all anchored claims"],
+          ["Flagged for double use", fmt(o?.claims?.with_double_use_findings), "Claims with a DUP-001 finding"],
+          ["Rejected by contract", fmt(o?.claims?.chain_rejections), "Failed registrations, recorded on chain"],
+        ].map(([k, v, d]) => (
+          <div key={k} className="bg-sheet p-5"><dt className="text-xs text-muted">{k}</dt><dd className="mt-1 text-[28px] leading-none font-bold tracking-tight">{o ? v : "…"}</dd><p className="mt-2 text-xs text-ink-soft">{d}</p></div>
+        ))}
+      </dl>
+
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+        <div className="space-y-10">
+          <section aria-labelledby="att-h">
+            <SectionHeader id="att-h" title="Needs attention" aside={claims ? `${attention.length} claim${attention.length === 1 ? "" : "s"}` : undefined} />
+            {claims && attention.length === 0 && <p className="rounded-panel border border-dashed border-rule-strong bg-sheet p-5 text-sm text-ink-soft">Nothing is blocked, under review or challenged.</p>}
+            <ul className="space-y-2.5">
+              {attention.map((c) => {
+                const out = checkOutcome(c);
+                return (
+                  <li key={c.id}>
+                    <Link viewTransition to={`/claims/${c.id}`} className="grid gap-2 rounded-panel border border-rule bg-sheet p-4 hover:border-ink sm:grid-cols-[1fr_auto] sm:items-center">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-3"><span className="font-semibold">{c.claimant.replace(" (SYNTHETIC)", "")}</span><span className="font-mono text-xs text-muted">{c.ref}</span></div>
+                        <div className="mt-0.5 text-sm text-ink-soft">{c.status === "challenged" ? "A reviewer decision is pending." : out.outcome === "double-use" ? "Units already back another claim. Review the overlap." : out.outcome === "insufficient" ? "No serials disclosed. Request the retirement serial numbers." : "Review the findings before anchoring."}</div>
+                      </div>
+                      <div className="flex flex-wrap gap-2"><OutcomeToken outcome={c.status === "challenged" ? "review" : out.outcome} label={c.status === "challenged" ? "Challenged" : out.label} /></div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            {ready.length > 0 && (
+              <p className="mt-4 text-sm text-ink-soft">
+                {ready.length} claim{ready.length === 1 ? " has" : "s have"} passed every check and can be anchored: {ready.map((c, i) => <span key={c.id}>{i > 0 && ", "}<Link className="font-mono underline" to={`/claims/${c.id}`}>{c.ref}</Link></span>)}.
+              </p>
+            )}
+          </section>
+
+          <section aria-labelledby="act-h">
+            <SectionHeader id="act-h" title="Ledger transactions" aside="Most recent first" />
+            {o && chainEvents.length === 0 && <p className="text-sm text-ink-soft">No ledger transactions yet.</p>}
+            <ol className="divide-y divide-rule rounded-panel border border-rule bg-sheet">
+              {chainEvents.map((e: any) => (
+                <li key={e.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 text-sm">
+                  <Blocks size={15} className={e.kind === "chain_rejected" ? "text-crimson" : "text-ink-soft"} aria-hidden />
+                  <span className="min-w-0 truncate"><span className={e.kind === "chain_rejected" ? "font-semibold text-crimson" : "font-medium"}>{CHAIN_EVENT[e.kind]}</span>{e.ref && <> · <Link viewTransition to={`/claims/${e.claim_id}`} className="font-mono text-xs underline">{e.ref}</Link></>}</span>
+                  <span className="font-mono text-xs text-muted">block {e.block_number} · {short(e.tx_hash, 6)}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </div>
+
+        <section aria-labelledby="sys-h" className="space-y-4">
+          <SectionHeader id="sys-h" title="System" />
+          <div className="space-y-4 rounded-sheet border border-rule bg-sheet p-5 text-sm">
+            <div>
+              <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">ClaimLedger contract</h3>{o?.chain?.address ? <OutcomeToken outcome="passed" label="Reachable" /> : o ? <OutcomeToken outcome="review" label="Unavailable" /> : null}</div>
+              {o?.chain?.address ? (
+                <dl className="mt-3 grid grid-cols-[7rem_1fr] gap-x-3 gap-y-2">
+                  <dt className="text-muted">Network</dt><dd>{o.chain.public_network ? `Chain ${o.chain.chain_id}` : `Local development chain (id ${o.chain.chain_id})`}</dd>
+                  <dt className="text-muted">Block</dt><dd className="font-mono">{o.chain.block_number}</dd>
+                  <dt className="text-muted">Contract</dt><dd><CopyValue value={o.chain.address} label="contract address" /></dd>
+                  <dt className="text-muted">Registrar</dt><dd><CopyValue value={o.chain.registrar} label="registrar address" /></dd>
+                  <dt className="text-muted">Claims on chain</dt><dd>{o.chain.claim_count}</dd>
+                </dl>
+              ) : o && <p className="mt-2 text-ink-soft">{o.chain?.error ?? "The contract is not reachable."} Start it with <span className="font-mono">make chain</span> and <span className="font-mono">make deploy</span>.</p>}
+            </div>
+            <div className="border-t border-rule pt-4">
+              <h3 className="font-semibold">Registry reference</h3>
+              {ref ? (
+                <dl className="mt-3 grid grid-cols-[7rem_1fr] gap-x-3 gap-y-2">
+                  <dt className="text-muted">Source</dt><dd>Berkeley VROD {ref.source?.version?.split(" ")[0]} · {ref.source?.license}</dd>
+                  <dt className="text-muted">Scope</dt><dd>{ref.scope === "full" ? "Full index" : "Demo subset"}</dd>
+                  <dt className="text-muted">Records</dt><dd>{fmt(Object.values(ref.row_counts ?? {}).reduce((a: number, b: any) => a + b, 0) as number)} (Verra and Gold Standard)</dd>
+                  <dt className="text-muted">Data through</dt><dd>31 Aug 2026</dd>
+                </dl>
+              ) : o && <p className="mt-2 text-ink-soft">Not loaded.</p>}
+            </div>
+            <div className="border-t border-rule pt-4">
+              <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">AI extraction</h3>{o && (o.llm?.configured ? <OutcomeToken outcome="passed" label="Configured" /> : <OutcomeToken outcome="not-established" label="Not configured" />)}</div>
+              <p className="mt-2 text-ink-soft">{o?.llm?.configured ? `Model ${o.llm.model}; every AI-reported serial is re-parsed deterministically.` : "Serials are read by the deterministic parser only. Add ANTHROPIC_API_KEY to .env to enable the cross-checked AI pass."}</p>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

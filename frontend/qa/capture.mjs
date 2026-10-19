@@ -19,6 +19,8 @@ const viewports = [
   { name: "mobile-390", width: 390, height: 844 },
   { name: "mobile-320", width: 320, height: 640 },
 ];
+const only = process.env.VIEWPORTS?.split(",");
+if (only) viewports.splice(0, viewports.length, ...viewports.filter((v) => only.includes(v.name)));
 const routes = (process.env.ROUTES ?? "/,/overview,/claims,/claims/new,/claims/1,/claims/2,/verify,/evidence").split(",");
 
 const browser = await chromium.launch({ channel: "chrome" });
@@ -31,6 +33,11 @@ for (const vp of viewports) {
   page.on("pageerror", (e) => errors.push(String(e)));
   for (const r of routes) {
     const res = await page.goto(base + r, { waitUntil: "networkidle" });
+    // scroll like a reader so one-shot reveals fire, then return to the top
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += Math.round(window.innerHeight * 0.6)) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); }
+      window.scrollTo(0, 0);
+    });
     await page.waitForTimeout(1600); // let entrance motion settle
     const metrics = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
