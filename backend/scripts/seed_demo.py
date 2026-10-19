@@ -34,7 +34,7 @@ def main() -> None:
             r = c.post(f"{API}/api/claims", data={"claimant": m["claimant"], "period": "FY2025", "statement": m["statement"]}, files={"files": (file, f)})
         r.raise_for_status()
         d = r.json()
-        print(f"{d['ref']}  {d['claimant']:<32} {d['status']}")
+        print(f"submitted {d['ref']}  {d['claimant']:<32} checks: {d['verdict']}")
         return d
 
     nw = submit("northwind_allocation.pdf")
@@ -46,6 +46,10 @@ def main() -> None:
     c.post(f"{API}/api/claims/{ar['id']}/anchor", json={}).raise_for_status()
     submit("lumen_allocation.pdf")
     submit("kestrel_statement.txt")
+    print("\nFinal state:")
+    for c in sorted(c.get(f"{API}/api/claims").json(), key=lambda x: x["id"]):
+        chain = f"ledger claim #{c['chain_claim_id']}, block {c['block_number']}" if c["chain_claim_id"] else "not on chain"
+        print(f"  {c['ref']}  {c['claimant']:<32} {c['status']:<9} {chain}")
     print("Seeded the demo story.")
 
 

@@ -29,10 +29,14 @@ test.describe("landing", () => {
 
   test("hero steps are buttons that change the explanation", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: /1 Retirement/ }).click();
+    await page.getByRole("button", { name: "Step 1: Retirement" }).click();
     await expect(page.getByText(/Verra records 19,999 units/)).toBeVisible();
-    await page.getByRole("button", { name: /4 Overlap/ }).click();
-    await expect(page.getByText(/ClaimLedger refuses the second registration/)).toBeVisible();
+    await page.getByRole("button", { name: "Step 4: Overlap" }).click();
+    await expect(page.getByText(/the contract refuses the second registration/)).toBeVisible();
+    // the illustration links to the real rejected transaction in the seeded ledger
+    await page.getByRole("link", { name: /See this rejection as a real transaction/ }).click();
+    await expect(page.getByText("Rejected by contract").first()).toBeVisible();
+    await expect(page.getByText(/Failed transaction/).first()).toBeVisible();
   });
 
   test("How it works scrolls to the mechanism section", async ({ page }) => {
@@ -45,6 +49,31 @@ test.describe("landing", () => {
     await page.goto("/#how");
     await page.getByRole("button", { name: "Last unit: 896319559" }).click();
     await expect(page.getByText(/Range size: 10,000 units/)).toBeVisible();
+  });
+});
+
+test.describe("signature: first viewport and the Ruler", () => {
+  for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+    test(`overlap annotation is visible without scrolling at ${vp.width}x${vp.height}`, async ({ browser }) => {
+      const ctx = await browser.newContext({ viewport: vp, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await page.goto("/");
+      await expect(page.getByText("4,559 units claimed twice", { exact: true }).first()).toBeInViewport();
+      await expect(page.getByText("896,315,001", { exact: true }).first()).toBeInViewport();
+      await ctx.close();
+    });
+  }
+
+  test("selecting an overlap highlights it on both lanes; exact boundaries are on the scale", async ({ page }) => {
+    const claims = await (await page.request.get("/api/claims")).json();
+    const helios = claims.find((x: any) => x.claimant.startsWith("Helios"));
+    await page.goto(`/claims/${helios.id}`);
+    const overlaps = page.getByRole("button", { name: /^Overlap: 4,559 units/ });
+    await expect(overlaps).toHaveCount(2); // one on the other claim's lane, one on this claim's lane
+    await overlaps.first().click();
+    for (const el of await overlaps.all()) await expect(el).toHaveCSS("outline-style", "solid");
+    await expect(page.getByText("896,319,559", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(/does not say which claim is right/)).toBeVisible();
   });
 });
 
@@ -90,14 +119,14 @@ test.describe("claim detail", () => {
     await expect(page.getByRole("link", { name: /Open Northwind Foods/ })).toBeVisible();
     // accessible table alternative
     await page.getByRole("button", { name: "Show ranges as a table" }).first().click();
-    await expect(page.getByRole("cell", { name: "Claimed twice" })).toBeVisible();
+    await expect(page.getByRole("rowheader", { name: "Claimed twice" })).toBeVisible();
   });
 
   test("anchoring is disabled with a reason and the forced attempt asks for confirmation (Esc cancels)", async ({ page }) => {
     const helios = await claimId(page, "Helios");
     await page.goto(`/claims/${helios.id}`);
     await expect(page.getByRole("button", { name: "Anchor on ledger" }).first()).toBeDisabled();
-    await expect(page.getByText(/Disabled because of the blocking finding/)).toBeVisible();
+    await expect(page.getByText(/Disabled because of the blocking finding/).filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: "Send to the contract anyway" }).click();
     const dialog = page.getByRole("dialog", { name: /Send a registration the contract should reject/ });
     await expect(dialog).toBeVisible();

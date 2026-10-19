@@ -36,7 +36,7 @@ export function LedgerStatus({ night = false }: { night?: boolean }) {
   if (!c?.available) return <span className={`${base} ${night ? "text-crimson-bright" : "text-crimson"}`} title={c?.error} role="status">Ledger offline</span>;
   return (
     <span className={base} title={`ClaimLedger ${c.address}`}>
-      <span className="relative flex h-2 w-2" aria-hidden><span className="absolute inline-flex h-full w-full rounded-full bg-lichen-bright opacity-60 motion-safe:animate-ping [animation-duration:2.4s]" /><span className="relative inline-flex h-2 w-2 rounded-full bg-lichen-bright" /></span>
+      <span className="inline-flex h-2 w-2 rounded-full bg-lichen-bright" aria-hidden />
       {c.public_network ? `Chain ${c.chain_id}` : "Local dev chain"} · block <span className="font-mono">{c.block_number}</span>
     </span>
   );

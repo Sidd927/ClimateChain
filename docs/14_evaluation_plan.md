@@ -20,7 +20,9 @@ Question: can registry serials be turned reliably into unit ranges, and where do
 | Verra issuances | 19,624 | 19,624 (100%) | 19,624 (100%) | n/a |
 | Gold Standard retirements | 166,478 | 166,478 (100%) | 166,478 (100%) | 5 (data inconsistencies; see doc 04) |
 
-- Ignoring the batch would create 11,631 false overlaps in Verra data. This is evidence that the uniqueness namespace must be `(registry, batch)`.
+- Sorting Verra retirements by unit number while ignoring the batch yields 11,631 adjacent overlapping pairs, all between different batches (collisions of the wrong key, not overlaps). This is evidence that the uniqueness namespace must be `(registry, batch)`.
+- Overlap counts are adjacent overlapping pairs after sorting by first unit; zero adjacent pairs implies no overlapping pair at all within a batch.
+- Gold Standard: 5 pairs = 3 exact duplicate rows + 2 from one 10,000-unit record equal to two other records combined. Reported as data inconsistencies, not double retirement.
 - 44.7% of Verra retirements record no beneficial owner.
 - The parser regex was refined three times against this data (org codes containing digits, 2025 format without a sectoral scope, underscore date separators). Each refinement is covered by a unit test.
 

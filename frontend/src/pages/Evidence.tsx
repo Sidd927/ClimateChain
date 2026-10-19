@@ -30,9 +30,9 @@ export default function Evidence() {
       {/* headline results */}
       <ol className="mb-12 grid gap-px overflow-hidden rounded-sheet border border-rule bg-rule md:grid-cols-2 xl:grid-cols-4">
         <Headline n="01" title="Serials become unit ranges" value={a ? `${fmt(totalParsed)} / ${fmt(totalRows)}` : "…"} detail="Real Verra and Gold Standard registry rows parsed into (batch, first unit, last unit); every range size matches the stated quantity." token={<OutcomeToken outcome="passed" label="Real data" />} />
-        <Headline n="02" title="Intervals catch what hashes miss" value={du ? `${dec(du.onceonly.recall)} vs ${dec(du.baseline.recall)}` : "…"} detail="Recall on 270 labelled claim pairs: interval check vs exact serial/hash match. Perfect score expected by construction; the baseline gap is the finding." token={<OutcomeToken outcome="review" label="Synthetic pairs" />} />
+        <Headline n="02" title="Intervals catch what hashes miss" value={du ? `${dec(du.onceonly.recall)} vs ${dec(du.baseline.recall)}` : "…"} detail={du ? `Recall on ${fmt(du.n)} synthetic claim pairs built on real registry ranges: interval check vs exact serial/hash match. Ground truth uses the same interval definition, so OnceOnly\u2019s 1.00 is expected; the baseline gap is the finding.` : ""} token={<OutcomeToken outcome="review" label="Synthetic pairs" />} />
         <Headline n="03" title="Contract cost stays flat" value={gasHinted ? `${fmt(gasHinted[0])} gas` : "…"} detail={gasLast ? `Registering into a batch with 10 to ${gasLast.existing} active ranges. A linear scan grew to ${fmt(gasLast.linear)} gas.` : "Run the contract tests to generate gas results."} token={<OutcomeToken outcome="passed" label="Measured" />} />
-        <Headline n="04" title="Serial extraction, parser only" value={parser ? `${pct(parser.doc_exact)} exact` : "…"} detail="Documents read exactly by the deterministic parser alone; it fails on tables, prose ranges and OCR errors. The cross-checked AI pass meant for those is implemented but not yet measured (no API key)." token={<OutcomeToken outcome="not-established" label="AI not measured" />} />
+        <Headline n="04" title="Serial extraction, parser only" value={parser ? `${pct(parser.doc_exact)} exact` : "…"} detail={parser ? `Share of ${parser.n} synthetic document snippets (real serial ranges, 8 layouts) where the parser recovered every serial block exactly. It never invented a block (precision ${dec(parser.block_precision)}) but fails on tables, prose ranges and OCR errors. The AI pass is implemented but not measured.` : ""} token={<OutcomeToken outcome="not-established" label="AI not measured" />} />
       </ol>
 
       <div className="space-y-14">
@@ -59,8 +59,9 @@ export default function Evidence() {
                 </table>
               </div>
               <p className="mt-3 max-w-[80ch] text-sm leading-relaxed text-ink-soft">
-                Unit numbers are unique only inside an issuance batch: treating them as registry-wide would create <strong className="text-ink">{fmt(a.verra_retirements.overlapping_adjacent_pairs_if_batch_ignored)}</strong> false overlaps in Verra data, so every ledger range is keyed by registry and batch.
-                The {a.gold_retirements.overlapping_adjacent_pairs_within_namespace} Gold Standard overlaps are mostly exact duplicate rows in the export; they are treated as data inconsistencies, not double retirements. Source: {a.source.dataset}.
+                Overlaps are counted as adjacent overlapping pairs after sorting each batch's records by first unit (zero adjacent pairs means no two records in a batch overlap at all).
+                Unit numbers are unique only inside an issuance batch. Sorting all Verra retirements by unit number <em>without</em> the batch produces <strong className="text-ink">{fmt(a.verra_retirements.overlapping_adjacent_pairs_if_batch_ignored)}</strong> adjacent "overlapping" pairs, every one between records of different batches: collisions created by the wrong key, not overlaps. That is why every ledger range is keyed by registry and batch.
+                Of the {a.gold_retirements.overlapping_adjacent_pairs_within_namespace} Gold Standard pairs, 3 are exact duplicate rows and 2 come from one 10,000-unit record whose range exactly equals two other records combined. We report them as registry data inconsistencies to clarify, not as double retirements or as findings about any organisation. Source: {a.source.dataset}.
               </p>
             </>
           ) : <p className="text-sm text-muted">Registry audit not found. Run <span className="font-mono">make data</span>.</p>}

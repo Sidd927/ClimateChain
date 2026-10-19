@@ -96,7 +96,7 @@ That is 15 interaction tests and 7 axe-core WCAG A/AA checks. Design research, a
 |---|---|
 | Registry serials parsed into unit ranges | 493,518 / 493,518 (100%), all quantity-consistent |
 | Overlapping Verra retirements within a batch | 0 of 307,416 |
-| False overlaps if the batch is ignored | 11,631, so ranges are keyed by registry **and** batch |
+| Apparent overlaps if the batch is ignored | 11,631 adjacent pairs, all between different batches (collisions of the wrong key, not overlaps), so ranges are keyed by registry **and** batch |
 | Double-use detection, 270 labelled pairs (OnceOnly / contract) | precision 1.000, recall 1.000 (expected by construction; see below) |
 | Same set, exact serial-string or document-hash baseline | recall 0.333 (misses every partial, contained, superset or reformatted overlap) |
 | On-chain registration gas, batch with 10 → 200 active claims | flat 301,452 (sorted interval list with O(1) hinted insert); linear v0 grows to 832,608 |

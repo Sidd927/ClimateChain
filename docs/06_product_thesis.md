@@ -30,7 +30,7 @@ ICVCM's Core Carbon Principles and Article 6 accounting treat **no double counti
 
 ## 5. Our unique insight
 
-**A claim is an interval.** Every Verra and Gold Standard serial encodes a contiguous range of unit numbers inside an issuance batch. Reducing each public claim to `(registry, batch, [start, end])` turns "has anyone else claimed this?" into an exact, machine-checkable **interval-overlap** question. Document hashes and record IDs can't answer it: two claims citing *different but overlapping* ranges have different hashes and different serial strings. We measured that unit numbers restart across Verra batches (11,631 false overlaps if the batch is ignored), so the namespace *must* be `(registry, batch)`.
+**A claim is an interval.** Every Verra and Gold Standard serial encodes a contiguous range of unit numbers inside an issuance batch. Reducing each public claim to `(registry, batch, [start, end])` turns "has anyone else claimed this?" into an exact, machine-checkable **interval-overlap** question. Document hashes and record IDs can't answer it: two claims citing *different but overlapping* ranges have different hashes and different serial strings. We measured that unit numbers restart across Verra batches (ignoring the batch produces 11,631 adjacent "overlapping" pairs, all between different batches), so the namespace *must* be `(registry, batch)`.
 
 ## 6. What OnceOnly does that alternatives don't demonstrate
 
