@@ -16,7 +16,7 @@
 | G. Build: Milestones 1–4 | Verified end to end on a local chain |
 | Milestone 5: demo scenario | Five sample documents; story verified in the browser and by `make e2e` |
 | Milestone 6: hardening | Done: tests, e2e, secret scan, fresh-clone pass, container build |
-| Submission package | Done in `docs/submission/` (Mission 04). Owner actions remain: make the repo public, final video upload, Devpost submission, licence choice, optional Render deployment |
+| Submission package | Done in `docs/submission/` (Mission 04). Owner actions remain: make the repo public, final video upload, Devpost submission, optional Render deployment (code licence: MIT, added) |
 
 ## Mission 04: final product, deployment, demo film and submission (done; `feature/submission-readiness` merged to main)
 

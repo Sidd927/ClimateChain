@@ -163,6 +163,10 @@ Claims come from competitors, brokers, auditors and registries in different juri
 
 `docs/00_mission_status.md` is the project status. Hackathon submission material (Devpost copy, demo script, judge Q&A, deployment and QA reports) is in [docs/submission/](docs/submission/). Docs 01–16 cover requirements, judging strategy, competitive landscape, sources, idea selection, thesis, product requirements, architecture, data model, AI/blockchain design, security, evaluation and backlog.
 
+## Licence
+
+The source code is released under the [MIT License](LICENSE). The contents of `data/` (registry records and the demo documents that quote them) are **not** covered by it; they keep the dataset's CC BY 4.0 terms. See [data/LICENSE](data/LICENSE).
+
 ## Data attribution
 
 Registry data © the respective registries, compiled by Berkeley Carbon Trading Project: Quartson, P., Haya, B.K., Bernard, T., Abayo, A., Rong, X., So, I.S., Elias, M. (2026). *Voluntary Registry Offsets Database v2026-08*, UC Berkeley. Licensed CC BY 4.0.

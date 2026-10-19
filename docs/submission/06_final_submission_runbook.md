@@ -94,7 +94,7 @@ The overview asks for a **public** repository. Before making it public:
 
    It must print nothing. `13_final_qa_report.md` records a clean scan.
 2. Remember that the whole commit history becomes public: author name and email on commits, all docs and the design screenshots.
-3. Decide the licence (§12) first if you want one in place at publication.
+3. The licence is already in place (§12).
 4. Then go to GitHub → Settings → General → Danger Zone → **Change repository visibility → Public**.
 5. Open the URL in a private window to confirm it's reachable.
 
@@ -106,8 +106,8 @@ The overview asks for a **public** repository. Before making it public:
 
 ## 12. Licence and attribution
 - **Data:** Berkeley VROD v2026-08 (CC BY 4.0) is attributed in the README, the app and the documents. OK.
-- **Code licence:** none yet. The contracts say MIT in their SPDX headers.
-- **Recommendation:** add an MIT `LICENSE` for the code, stating that `data/` keeps its CC BY 4.0 terms. This needs your approval; I haven't added one.
+- **Code licence:** MIT (`LICENSE`), added with your approval. It matches the contracts' SPDX headers and `contracts/package.json`.
+- **Data:** `data/LICENSE` states that `data/` is outside the MIT licence and keeps CC BY 4.0, with the full citation.
 
 ## 13. Pre-submission smoke test (about 10 minutes)
 1. In a fresh clone:
@@ -140,6 +140,5 @@ The overview asks for a **public** repository. Before making it public:
 1. **Make the repository public.** Required by the overview; owner approval.
 2. **Final video.** Record the human take, or approve the reference cut; then upload and get the link. Owner action.
 3. **Submit on Devpost and confirm the form fields** (track field, video field type, team). Owner action.
-4. **Licence decision.** Recommended MIT for code; owner decision; not required by the rules.
-5. **Optional public demo on Render free.** Owner approval and account.
-6. **Optional VoiceOver check.** Five-minute manual checklist in `13_final_qa_report.md`.
+4. **Optional public demo on Render free.** Owner approval and account.
+5. **Optional VoiceOver check.** Five-minute manual checklist in `13_final_qa_report.md`.
