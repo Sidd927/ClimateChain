@@ -67,3 +67,6 @@ eval:
 
 e2e:
 	$(VPY) eval/e2e_smoke.py
+
+seed:
+	$(VPY) backend/scripts/seed_demo.py
