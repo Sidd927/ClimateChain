@@ -283,7 +283,7 @@ export default function ClaimPage() {
                   <div className="mt-2 text-xs text-muted">SHA-256 fingerprint</div>
                   <CopyValue value={e.sha256} label="SHA-256" />
                   <Disclosure summary="Extracted text" className="mt-2">
-                    <pre className="max-h-64 overflow-auto rounded-[6px] bg-fog p-3 font-mono text-[11.5px] leading-relaxed whitespace-pre-wrap">{e.text_excerpt}</pre>
+                    <pre className="max-h-64 overflow-auto rounded-[6px] bg-fog p-3 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap">{e.text_excerpt}</pre>
                   </Disclosure>
                 </div>
               ))}

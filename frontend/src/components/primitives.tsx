@@ -61,7 +61,7 @@ export function SyntheticTag() {
 }
 
 export function Mono({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <span className={`font-mono text-[0.86em] ${className}`}>{children}</span>;
+  return <span className={`font-mono text-[0.92em] ${className}`}>{children}</span>;
 }
 
 export function CopyValue({ value, label, className = "" }: { value: string | null | undefined; label: string; className?: string }) {
@@ -142,7 +142,7 @@ export function Disclosure({ summary, children, defaultOpen = false, className =
         {summary}
       </button>
       <div id={id} className="disclosure" data-open={open}>
-        <div inert={!open}>
+        <div inert={!open} aria-hidden={!open}>
           <div className="pt-2.5">{children}</div>
         </div>
       </div>

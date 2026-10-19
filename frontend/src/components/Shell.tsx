@@ -140,7 +140,7 @@ export function AppLayout() {
           </div>
         </div>
       </header>
-      <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-5 pt-8 pb-20 sm:px-6">
+      <main id="main" className="mx-auto min-h-[calc(100dvh-3.5rem)] w-full max-w-[1200px] flex-1 px-5 pt-8 pb-20 sm:px-6">
         <Suspense fallback={<div className="h-40 rounded-sheet bg-fog-2/70" aria-busy="true" aria-label="Loading page" />}>
           <Outlet />
         </Suspense>

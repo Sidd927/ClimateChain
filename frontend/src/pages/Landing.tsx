@@ -130,9 +130,9 @@ export default function Landing() {
 
   const checksList = (tone: "night" | "day") => (
     <>
-      <li><span className={`mr-2 font-mono ${tone === "night" ? "text-white" : "text-ink"}`}>1</span>Reads the serial numbers in a claim's evidence.</li>
-      <li><span className={`mr-2 font-mono ${tone === "night" ? "text-white" : "text-ink"}`}>2</span>Matches them to {totalRecords ? fmt(totalRecords) : "about half a million"} real Verra and Gold Standard registry records.</li>
-      <li><span className={`mr-2 font-mono ${tone === "night" ? "text-white" : "text-ink"}`}>3</span>Flags units another claim already relies on, and a smart contract refuses to register them twice.</li>
+      <li><span aria-hidden className={`mr-2 font-mono ${tone === "night" ? "text-white" : "text-ink"}`}>1</span>Reads the serial numbers in a claim's evidence.</li>
+      <li><span aria-hidden className={`mr-2 font-mono ${tone === "night" ? "text-white" : "text-ink"}`}>2</span>Matches them to {totalRecords ? fmt(totalRecords) : "about half a million"} real Verra and Gold Standard registry records.</li>
+      <li><span aria-hidden className={`mr-2 font-mono ${tone === "night" ? "text-white" : "text-ink"}`}>3</span>Flags units another claim already relies on, and a smart contract refuses to register them twice.</li>
     </>
   );
 

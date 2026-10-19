@@ -173,7 +173,7 @@ export function Ruler({
                 {lane.href && interactive ? (
                   <Link viewTransition to={lane.href} className={`truncate text-[13px] font-semibold underline decoration-transparent underline-offset-2 hover:decoration-current ${strong}`}>{lane.label}</Link>
                 ) : <div className={`truncate text-[13px] font-semibold ${strong}`}>{lane.label}</div>}
-                {lane.sub && <div className={`truncate text-[11.5px] ${text}`}>{lane.sub}</div>}
+                {lane.sub && <div className={`truncate text-[12px] ${text}`}>{lane.sub}</div>}
               </div>
               <div className={`relative h-8 rounded-[3px] ${laneBg}`}>
                 {lane.bands.length === 0 && <span className={`absolute inset-0 flex items-center px-2.5 text-[12px] ${text}`}>{lane.emptyText ?? "No matching record in the registry snapshot"}</span>}
