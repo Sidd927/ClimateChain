@@ -1,0 +1,24 @@
+# env / secrets
+.env
+.env.*
+!.env.example
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# node
+node_modules/
+dist/
+# hardhat
+contracts/cache/
+contracts/artifacts/
+contracts/typechain-types/
+contracts/coverage/
+# data (raw downloads are large; rebuilt by scripts)
+data/raw/
+data/reference/registry_full.sqlite
+# runtime
+var/
+*.log
+.DS_Store
