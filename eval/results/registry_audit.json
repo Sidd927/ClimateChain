@@ -1,0 +1,46 @@
+{
+  "source": {
+    "dataset": "Berkeley Carbon Trading Project \u2014 Voluntary Registry Offsets Database (VROD) registry files",
+    "version": "2026-08 (data through 2026-08-31)",
+    "license": "CC BY 4.0",
+    "citation": "Quartson, P., Haya, B.K., Bernard, T., Abayo, A., Rong, X., So, I.S., Elias, M. (2026). Voluntary Registry Offsets Database v2026-08, Berkeley Carbon Trading Project, UC Berkeley.",
+    "url": "https://gspp.berkeley.edu/berkeley-carbon-trading-project/offsets-database"
+  },
+  "verra_retirements": {
+    "rows": 307416,
+    "parsed": 307416,
+    "qty_consistent": 307416,
+    "unparsed_examples": [],
+    "with_beneficiary": 170010,
+    "namespaces": 16041,
+    "overlapping_adjacent_pairs_within_namespace": 0,
+    "overlapping_adjacent_pairs_if_batch_ignored": 11631,
+    "retirements_per_namespace": {
+      "median": 2,
+      "p99": 208,
+      "max": 37284
+    }
+  },
+  "verra_issuances": {
+    "rows": 19624,
+    "parsed": 19624,
+    "qty_consistent": 19624,
+    "unparsed_examples": []
+  },
+  "gold_retirements": {
+    "rows": 166478,
+    "parsed": 166478,
+    "qty_consistent": 166478,
+    "unparsed_examples": [],
+    "with_beneficiary": 57548,
+    "namespaces": 11272,
+    "overlapping_adjacent_pairs_within_namespace": 5,
+    "overlapping_adjacent_pairs_if_batch_ignored": 147880,
+    "retirements_per_namespace": {
+      "median": 2,
+      "p99": 262,
+      "max": 2271
+    }
+  },
+  "built_at": "2026-10-19T07:54:56Z"
+}
