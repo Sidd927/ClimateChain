@@ -17,6 +17,23 @@ Status vocabulary: **Not started** · **In progress** · **Implemented** (code e
 | B-09 | Synthetic demo documents (5 scenarios) citing real retirements | Verified E2E | `data/demo/` |
 | B-10 | Evaluation harness E2 + E3 + contract replay | Tested | `eval/results/latest.md` |
 
+## Mission 02: frontend redesign
+
+| ID | Task | Status | Evidence |
+|---|---|---|---|
+| D-01 | UI audit + baseline screenshots | Done | docs/design/01, 02 |
+| D-02 | Reference + technology research, art direction, design system | Done | docs/design/03–06 |
+| D-03 | Landing story with staged Ruler hero | Verified E2E | Playwright landing tests; reduced-motion test |
+| D-04 | App shell, mobile menu, single active nav, 404 | Verified E2E | Playwright navigation tests |
+| D-05 | Claim detail redesign (Ruler, provenance, outcome tokens, confirmations) | Verified E2E | Playwright + manual anchor in browser |
+| D-06 | Ledger filter/search/sort; intake validation + duplicate evidence; verify outcomes | Verified E2E | Playwright |
+| D-07 | Accessibility (axe A/AA clean, contrast, focus, non-colour encodings) | Tested | qa/tests/a11y.spec.ts |
+| D-08 | Visual QA across 5 viewports, fixes Q1–Q20 | Done | docs/design/07 |
+| D-09 | Screen-reader pass (VoiceOver) | Not started | Manual |
+| D-10 | Lighthouse / field performance numbers | Not started | Tool not installed |
+| D-11 | Shorten mobile landing (≈9,300 px) | Not started | |
+| D-12 | Precompute contour paths at build time | Not started | 46 KB per field today |
+
 ## P1: next
 
 | ID | Task | Status | Notes |

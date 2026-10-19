@@ -137,3 +137,8 @@ def test_api_health_and_create(tmp_env):
     assert body["unit_strips"][0]["records"][0]["unit_start"] == 896309560
     assert c.get(f"/api/claims/{body['id']}/report.html").status_code == 200
     assert c.post("/api/claims", data={"claimant": "X"}).status_code == 422
+    sha = body["evidence"][0]["sha256"]
+    hits = c.get(f"/api/evidence/{sha}").json()["claims"]
+    assert [h["ref"] for h in hits] == ["OO-2026-0001"]
+    assert c.get("/api/evidence/" + "0" * 64).json()["claims"] == []
+    assert c.get("/api/evidence/not-a-hash").status_code == 422

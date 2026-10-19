@@ -7,6 +7,8 @@ import "@fontsource/ibm-plex-mono/500.css";
 import "./index.css";
 import App from "./App";
 
+document.documentElement.classList.add("js"); // reveal styles only apply when JS can reveal
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>

@@ -34,7 +34,7 @@
 | Verra serials parsed by our parser | 307,416 (100%) | same |
 | Verra rows where end − start + 1 = quantity | 307,416 (100%) | same |
 | Overlapping retired ranges within the same Verra batch | 0 | same |
-| Overlaps if unit numbers are (wrongly) treated as globally unique | 11,629 → namespace must include the batch | same |
+| Overlaps if unit numbers are (wrongly) treated as globally unique | 11,631 → namespace must include the batch | same |
 | Verra rows with a Beneficial Owner recorded | 170,010 (55.3%); 44.7% have none | same |
 | Verra issuance rows parsed / quantity-consistent | 19,624 / 19,624 (100%) | same |
 | Gold Standard retirement rows parsed / quantity-consistent | 166,478 / 166,478 (100%) | same |

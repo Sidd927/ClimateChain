@@ -130,7 +130,11 @@ def overview():
         "SELECT e.id, e.kind, e.tx_hash, e.block_number, e.created_at, e.detail_json, e.claim_id, cl.ref, cl.claimant FROM events e LEFT JOIN claims cl ON cl.id=e.claim_id ORDER BY e.id DESC LIMIT 12")]
     for x in recent:
         x.pop("detail_json", None)
+    chain_events = [dict(x) for x in c.execute(
+        "SELECT e.id, e.kind, e.tx_hash, e.block_number, e.created_at, e.claim_id, cl.ref, cl.claimant FROM events e LEFT JOIN claims cl ON cl.id=e.claim_id "
+        "WHERE e.tx_hash IS NOT NULL ORDER BY e.id DESC LIMIT 10")]
     return {
+        "recent_chain_events": chain_events,
         "claims": {"total": sum(by_status.values()), "by_status": by_status, "units_anchored": units_anchored, "with_double_use_findings": dup_findings, "chain_rejections": rejected},
         "chain": ledger.info() if ledger else {"available": False, "error": err},
         "reference": r.meta() if r else None,
@@ -265,6 +269,18 @@ def report_html(claim_id: int):
     return HTMLResponse(page)
 
 
+@app.get("/api/evidence/{sha256}")
+def evidence_lookup(sha256: str):
+    """Which claims already cite a document with this SHA-256 (read-only; used for intake feedback)."""
+    if len(sha256) != 64 or any(ch not in "0123456789abcdef" for ch in sha256.lower()):
+        raise HTTPException(422, "Expected a 64-character hex SHA-256 digest")
+    rows = con().execute(
+        "SELECT c.id AS claim_id, c.ref, c.claimant, c.status, e.filename FROM evidence e JOIN claims c ON c.id=e.claim_id WHERE e.sha256=? ORDER BY c.id",
+        (sha256.lower(),),
+    ).fetchall()
+    return {"sha256": sha256.lower(), "claims": [dict(r) for r in rows]}
+
+
 @app.get("/api/reference/lookup")
 def reference_lookup(serial: str):
     from .serials import SerialError, parse_serial
@@ -297,7 +313,7 @@ def rules():
 def evaluation():
     d = ROOT / "eval/results"
     out = {}
-    for name in ("latest.json", "registry_audit.json"):
+    for name in ("latest.json", "registry_audit.json", "gas.json"):
         p = d / name
         if p.exists():
             out[name.removesuffix(".json")] = json.loads(p.read_text())

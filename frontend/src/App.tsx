@@ -1,96 +1,63 @@
-import { useEffect, useState } from "react";
-import { NavLink, Route, Routes, Link, useLocation } from "react-router-dom";
-import { api } from "./api";
-import Overview from "./pages/Overview";
-import Claims from "./pages/Claims";
-import NewClaim from "./pages/NewClaim";
-import ClaimPage from "./pages/ClaimPage";
-import Verify from "./pages/Verify";
-import Evaluation from "./pages/Evaluation";
+import { lazy, useEffect } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { AppLayout } from "./components/Shell";
+import { LinkButton } from "./components/primitives";
+import Landing from "./pages/Landing";
+// App pages load on demand so the landing story doesn't pay for them (and vice versa).
+const Overview = lazy(() => import("./pages/Overview"));
+const Claims = lazy(() => import("./pages/Claims"));
+const NewClaim = lazy(() => import("./pages/NewClaim"));
+const ClaimPage = lazy(() => import("./pages/ClaimPage"));
+const Verify = lazy(() => import("./pages/Verify"));
+const Evidence = lazy(() => import("./pages/Evidence"));
 
-function Mark() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden>
-      <rect width="32" height="32" rx="6" fill="#12333a" />
-      <rect x="5" y="13" width="22" height="6" rx="1" fill="#8fa3a6" />
-      <rect x="5" y="13" width="11" height="6" rx="1" fill="#3f8f6b" />
-    </svg>
-  );
-}
-
-function LedgerStatus() {
-  const [h, setH] = useState<any>(null);
-  useEffect(() => {
-    let alive = true;
-    const tick = () => api.health().then((x) => alive && setH(x)).catch(() => alive && setH({ offline: true }));
-    tick();
-    const t = setInterval(tick, 8000);
-    return () => { alive = false; clearInterval(t); };
-  }, []);
-  if (!h) return null;
-  if (h.offline) return <span className="text-xs text-crimson">API offline</span>;
-  const c = h.chain;
-  if (!c?.available) return <span className="text-xs text-crimson" title={c?.error}>Ledger offline</span>;
-  return (
-    <span className="inline-flex items-center gap-2 text-xs text-ink-soft" title={`ClaimLedger ${c.address}`}>
-      <span className="h-2 w-2 rounded-full bg-lichen" aria-hidden />
-      {c.public_network ? `Chain ${c.chain_id}` : "Local dev chain"} · block {c.block_number}
-    </span>
-  );
-}
-
-const nav = [
-  { to: "/", label: "Overview", end: true },
-  { to: "/claims", label: "Claims ledger" },
-  { to: "/claims/new", label: "Check a claim" },
-  { to: "/verify", label: "Verify" },
-  { to: "/evaluation", label: "Evidence" },
+const TITLES: [RegExp, string][] = [
+  [/^\/$/, "OnceOnly — every retired tonne, claimed once"],
+  [/^\/overview/, "Overview · OnceOnly"],
+  [/^\/claims\/new/, "Check a claim · OnceOnly"],
+  [/^\/claims\/\d+/, "Claim · OnceOnly"],
+  [/^\/claims/, "Claims ledger · OnceOnly"],
+  [/^\/verify/, "Verify · OnceOnly"],
+  [/^\/evidence/, "Evidence · OnceOnly"],
 ];
 
-export default function App() {
-  const { pathname } = useLocation();
-  // "/claims/new" belongs to "Check a claim", not to the ledger
-  const isActive = (to: string, active: boolean) => (to === "/claims" ? active && pathname !== "/claims/new" : active);
+/** Scroll to top on route change (keep hash navigation), and set a useful document title. */
+function RouteEffects() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (!hash) window.scrollTo({ top: 0 });
+    document.title = TITLES.find(([re]) => re.test(pathname))?.[1] ?? "Not found · OnceOnly";
+  }, [pathname, hash]);
+  return null;
+}
+
+function NotFound() {
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-rule bg-sheet">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-2 px-5 py-3">
-          <Link to="/" className="flex items-center gap-2.5 font-bold tracking-tight">
-            <Mark />
-            <span className="text-[17px]">OnceOnly</span>
-          </Link>
-          <nav className="order-3 flex w-full gap-5 overflow-x-auto text-sm sm:order-none sm:w-auto">
-            {nav.map((n) => (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                end={n.end}
-                className={({ isActive: a }) => `whitespace-nowrap border-b-2 py-1 ${isActive(n.to, a) ? "border-ink font-semibold text-ink" : "border-transparent text-ink-soft hover:text-ink"}`}
-              >
-                {n.label}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="ml-auto"><LedgerStatus /></div>
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-5 pb-20 pt-8">
-        <Routes>
-          <Route path="/" element={<Overview />} />
+    <div className="max-w-xl space-y-4 py-10">
+      <h1 className="text-3xl font-bold tracking-tight">This page isn't on the ledger.</h1>
+      <p className="text-ink-soft">The address doesn't match any OnceOnly page. Claims live under the claims ledger, by their number.</p>
+      <div className="flex flex-wrap gap-3"><LinkButton to="/claims">Open the claims ledger</LinkButton><LinkButton to="/" variant="secondary">Go to the story</LinkButton></div>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <RouteEffects />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route element={<AppLayout />}>
+          <Route path="/overview" element={<Overview />} />
           <Route path="/claims" element={<Claims />} />
           <Route path="/claims/new" element={<NewClaim />} />
           <Route path="/claims/:id" element={<ClaimPage />} />
           <Route path="/verify" element={<Verify />} />
-          <Route path="/evaluation" element={<Evaluation />} />
-          <Route path="*" element={<p>Page not found. <Link className="underline" to="/">Go to the overview</Link>.</p>} />
-        </Routes>
-      </main>
-      <footer className="border-t border-rule">
-        <div className="mx-auto max-w-6xl px-5 py-6 text-xs leading-relaxed text-muted">
-          OnceOnly checks whether the same retired registry units back more than one public claim. It does not rate credit quality, additionality or permanence, and a finding is not a determination of fraud.
-          Registry data: Berkeley Carbon Trading Project, Voluntary Registry Offsets Database v2026-08 (CC BY 4.0). All claimants in the demo are fictional.
-        </div>
-      </footer>
-    </div>
+          <Route path="/evidence" element={<Evidence />} />
+          <Route path="/evaluation" element={<Navigate to="/evidence" replace />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </>
   );
 }

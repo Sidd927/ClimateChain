@@ -20,7 +20,7 @@ Question: can registry serials be turned reliably into unit ranges, and where do
 | Verra issuances | 19,624 | 19,624 (100%) | 19,624 (100%) | n/a |
 | Gold Standard retirements | 166,478 | 166,478 (100%) | 166,478 (100%) | 5 (data inconsistencies; see doc 04) |
 
-- Ignoring the batch would create 11,629 false overlaps in Verra data. This is evidence that the uniqueness namespace must be `(registry, batch)`.
+- Ignoring the batch would create 11,631 false overlaps in Verra data. This is evidence that the uniqueness namespace must be `(registry, batch)`.
 - 44.7% of Verra retirements record no beneficial owner.
 - The parser regex was refined three times against this data (org codes containing digits, 2025 format without a sectoral scope, underscore date separators). Each refinement is covered by a unit test.
 

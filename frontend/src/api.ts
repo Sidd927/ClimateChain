@@ -131,6 +131,7 @@ export const api = {
     return new File([blob], name, { type: blob.type });
   },
   evaluation: () => request<any>("/api/eval"),
+  evidenceLookup: (sha256: string) => request<{ sha256: string; claims: { claim_id: number; ref: string; claimant: string; status: ClaimStatus; filename: string }[] }>(`/api/evidence/${sha256}`),
 };
 
 export const fmt = (n: number | null | undefined) => (n == null ? "—" : n.toLocaleString("en-US"));

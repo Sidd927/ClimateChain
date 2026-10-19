@@ -23,3 +23,6 @@ var/
 *.log
 .DS_Store
 .claude/
+docs/design/screenshots/wip*/
+docs/design/screenshots/after/laptop-1280_*
+docs/design/screenshots/after/mobile-320_*
