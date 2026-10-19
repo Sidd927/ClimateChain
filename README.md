@@ -18,7 +18,7 @@ Carbon registries make sure a credit is retired only once. What they don't cover
 
 | | |
 |---|---|
-| Registry retirement and issuance records | **Real**, public: Berkeley Carbon Trading Project, *Voluntary Registry Offsets Database* v2026-08, CC BY 4.0 (data through 2026-08-31) |
+| Registry retirement and issuance records | **Real**, public: Berkeley Carbon Trading Project, *Voluntary Registry Offsets Database* v2026-08, released by Berkeley under CC BY 4.0 (data through 2026-08-31). The underlying Verra and Gold Standard rights are unverified; see [Licence](#licence) |
 | Claimants, broker statements, claims | **Synthetic**, fictional names, labelled "SYNTHETIC" everywhere |
 | Blockchain transactions | Real transactions on a **local Hardhat development chain** (chain id 31337), not a public network |
 
@@ -165,7 +165,7 @@ Claims come from competitors, brokers, auditors and registries in different juri
 
 ## Licence
 
-The source code is released under the [MIT License](LICENSE). The contents of `data/` (registry records and the demo documents that quote them) are **not** covered by it; they keep the dataset's CC BY 4.0 terms. See [data/LICENSE](data/LICENSE).
+The source code is released under the [MIT License](LICENSE). The contents of `data/` (registry records and the demo documents that quote them) are **not** covered by it; their rights are separate. Berkeley releases the registry database under CC BY 4.0, but the committed registry rows originate from the Verra and Gold Standard registries, whose terms we could not verify permit redistribution. They are included for demonstration and attributed, and will be removed on request of a rights holder. See [data/LICENSE](data/LICENSE).
 
 ## Data attribution
 

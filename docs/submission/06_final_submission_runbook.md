@@ -105,9 +105,9 @@ The overview asks for a **public** repository. Before making it public:
 - **Decision:** deploy (free, sleeps after 15 minutes, about a 1-minute wake) or skip. A hosted demo isn't required.
 
 ## 12. Licence and attribution
-- **Data:** Berkeley VROD v2026-08 (CC BY 4.0) is attributed in the README, the app and the documents. OK.
+- **Data:** Berkeley VROD v2026-08 (released by Berkeley under CC BY 4.0) is attributed in the README, the app and the documents.
 - **Code licence:** MIT (`LICENSE`), added with your approval. It matches the contracts' SPDX headers and `contracts/package.json`.
-- **Data:** `data/LICENSE` states that `data/` is outside the MIT licence and keeps CC BY 4.0, with the full citation.
+- **Data:** `data/LICENSE` states that `data/` is outside the MIT licence and keeps the full citation. It also states the **unresolved rights limitation**: the committed registry rows originate from Verra and Gold Standard, whose terms restrict redistribution and which we could not verify permit it. The subset is included for demonstration and is removable on request. Decide whether you accept that before making the repository public; the alternative is to ask both registries for written permission.
 
 ## 13. Pre-submission smoke test (about 10 minutes)
 1. In a fresh clone:

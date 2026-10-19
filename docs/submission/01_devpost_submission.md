@@ -62,7 +62,7 @@ A central database could run the same overlap query. But claims come from compet
 - **Toward production:** a public L2 or permissioned consortium chain, authenticated registrar roles per assurer, live registry feeds instead of snapshots, and an evaluated AI extractor for tables and scans.
 
 ### What is real and what is synthetic
-- **Real:** registry records (Berkeley VROD v2026-08, CC BY 4.0), the smart contract and its transactions, the tests and measurements above.
+- **Real:** registry records (Berkeley VROD v2026-08, which Berkeley releases under CC BY 4.0), the smart contract and its transactions, the tests and measurements above. The repository includes a 38,004-row subset of those records for the demo; the underlying Verra and Gold Standard terms restrict redistribution without permission, and we could not verify that permission, so the subset is attributed, included for demonstration only, and removable on request (`data/LICENSE`).
 - **Synthetic:** every company, broker statement and claim in the demo (labelled "SYNTHETIC" in the app).
 - **Local:** the chain is a Hardhat development network (chain id 31337), not a public network.
 

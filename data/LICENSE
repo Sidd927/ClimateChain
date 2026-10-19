@@ -1,24 +1,50 @@
-Licence for the contents of data/
+Rights notice for the contents of data/
 
 The MIT License in the repository root covers the OnceOnly source code only.
 It does NOT apply to this directory.
 
-Everything under data/ keeps the terms of its source: Creative Commons
-Attribution 4.0 International (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/
+What is licensed, and by whom
+- The Berkeley Carbon Trading Project releases the Voluntary Registry Offsets
+  Database v2026-08 under Creative Commons Attribution 4.0 International
+  (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/ . That is the
+  licence Berkeley states on its download page and in the workbook. We use and
+  attribute the data on that basis.
 
-- data/reference/: real registry records (a subset of the source dataset).
-- data/demo/: fictional claim documents that quote real registry serial
-  ranges from the same dataset.
-- data/raw/ (not committed): the downloaded source workbook.
+What we could not verify
+- The rows in data/reference/ originate from the Verra and Gold Standard
+  registries. The Berkeley "registry files" workbook we parse describes them as
+  "exactly as downloaded" from the registries and carries no licence statement
+  of its own.
+- Verra's Registry Terms of Use (July 2026) and the Gold Standard Impact
+  Registry Terms of Use (v2.1, May 2025) state that the registry owns its data
+  and restrict copying or sharing of registry contents with third parties
+  without written permission. Neither document, as far as we could find, grants
+  a licence to third parties to redistribute registry records, and we could not
+  confirm that Berkeley holds registry permission to relicense these rows.
+- We therefore make no claim that the registry-origin rows in this directory
+  are freely redistributable. They are included only so that the
+  demonstration and tests run without a 67 MB download, and for the
+  non-commercial hackathon evaluation of this project. If you are a rights
+  holder and want any of this removed, open an issue or contact the repository
+  owner and it will be removed promptly.
+- This notice is not legal advice.
 
-Source and required attribution:
+What is in this directory
+- data/reference/: a 38,004-row subset of registry records (Verra retirements
+  and issuances, Gold Standard retirements), reformatted into registry, batch
+  and unit ranges. It includes the beneficiary and reason text where the
+  registries publish it.
+- data/demo/: fictional claim documents that quote real registry serial ranges.
+  The claimants and statements are invented and labelled SYNTHETIC.
+- data/raw/ (not committed): the downloaded source workbooks. Rebuild the full
+  index yourself with `make data`, which downloads from Berkeley.
+
+Required attribution (kept everywhere the data is used)
   Quartson, P., Haya, B.K., Bernard, T., Abayo, A., Rong, X., So, I.S., Elias, M. (2026).
   Voluntary Registry Offsets Database v2026-08, Berkeley Carbon Trading Project,
   UC Berkeley. https://gspp.berkeley.edu/berkeley-carbon-trading-project/offsets-database
   Registry data (c) the respective registries (Verra, Gold Standard).
 
 Changes made by OnceOnly: rows were selected to cover the demo scenarios and
-reformatted (parsed into registry, batch and unit ranges). The claimant
-companies and documents in data/demo/ are fictional and labelled SYNTHETIC.
-No endorsement by the Berkeley Carbon Trading Project or the registries is
-implied.
+reformatted (parsed into registry, batch and unit ranges). No endorsement by
+the Berkeley Carbon Trading Project or the registries is implied.

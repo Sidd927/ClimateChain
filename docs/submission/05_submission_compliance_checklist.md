@@ -27,7 +27,7 @@ Requirements come from `00_official_requirements.md` (Devpost overview, rules an
 | 13 | Team: 2–5 members or individual; every member joined the hackathon | — | Confirm | Add members via "Manage team", or submit as an individual |
 | 14 | Eligibility (country restrictions "noted", no list shown) | — | Confirm | Owner checks eligibility in the form or with the organisers |
 | 15 | Accurate claims; no fabricated results | Every number traces to `eval/results/`, the app or measured runs; synthetic data labelled; limits stated (`13_final_qa_report.md`) | Done | Keep any later edits to the same standard |
-| 16 | Third-party data used under its licence | VROD CC BY 4.0, attributed in README, app, documents and `data/LICENSE` | Done | — |
-| 17 | Repository licence (not an official requirement) | `LICENSE` (MIT, code); `data/LICENSE` (data keeps CC BY 4.0) | Done | — |
+| 16 | Third-party data used under its licence | Berkeley VROD is released under CC BY 4.0 and is attributed in README, app, documents and `data/LICENSE`. **Unresolved:** Verra's and Gold Standard's terms restrict redistribution of registry contents; permission for the committed 38,004-row subset is unverified (`13_final_qa_report.md`) | Attributed; rights limitation documented | Optional: ask Verra and Gold Standard for written permission, or remove the subset on request |
+| 17 | Repository licence (not an official requirement) | `LICENSE` (MIT, code); `data/LICENSE` (data excluded from MIT; rights notice) | Done | — |
 | 18 | Video file upload, format and size (unofficial forum report: 35 MB, no track field) | Reference MP4 is 31.6 MB (30.1 MiB), H.264/AAC | Confirm | Check the form's field type |
 | 19 | AI-use disclosure | No policy found | Done (none required) | The video description discloses synthetic narration if the reference cut is used |
