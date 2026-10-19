@@ -44,6 +44,12 @@ class Settings:
     llm_model: str = os.environ.get("ONCEONLY_LLM_MODEL", "claude-opus-5-5")
     llm_enabled: bool = os.environ.get("ONCEONLY_LLM", "auto").lower() != "off"
     max_upload_bytes: int = int(os.environ.get("ONCEONLY_MAX_UPLOAD_BYTES", str(10 * 1024 * 1024)))
+    # Public demo instance: ledger writes refused, claim checks rate-limited and capped (see docs/submission/08).
+    public_demo: bool = os.environ.get("ONCEONLY_PUBLIC_DEMO", "0") == "1"
+    public_max_claims: int = int(os.environ.get("ONCEONLY_PUBLIC_MAX_CLAIMS", "200"))
+    public_rate_per_10min: int = int(os.environ.get("ONCEONLY_PUBLIC_RATE", "10"))
+    # Serve the built frontend from the API process (single-container deployment).
+    static_dir: Path | None = _path("ONCEONLY_STATIC_DIR", "") if os.environ.get("ONCEONLY_STATIC_DIR") else None
     cors_origins: tuple[str, ...] = tuple(
         o.strip() for o in os.environ.get("ONCEONLY_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()
     )

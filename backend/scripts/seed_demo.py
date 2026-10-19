@@ -12,13 +12,14 @@ Run `make reset` (and restart the API) before seeding for a clean ledger.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
 import httpx
 
 ROOT = Path(__file__).resolve().parents[2]
-API = "http://127.0.0.1:8000"
+API = os.environ.get("ONCEONLY_API", "http://127.0.0.1:8000")
 DEMO = ROOT / "data/demo"
 
 

@@ -43,6 +43,7 @@ test("skip link, then open a claim from the ledger and read the overlap with the
 test("forced registration dialog opens, traps focus and closes with Escape, returning focus", async ({ page }) => {
   const claims = await (await page.request.get("/api/claims")).json();
   const helios = claims.find((c: any) => c.claimant.startsWith("Helios"));
+  test.skip((await (await page.request.get("/api/health")).json()).public_demo, "ledger-write dialog is disabled on a public demo instance (asserted in ui.spec.ts)");
   await page.goto(`/claims/${helios.id}`);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await tabTo(page, (e) => e.text === "Send to the contract anyway");

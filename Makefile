@@ -3,7 +3,7 @@ VENV := .venv
 VPY := $(VENV)/bin/python
 VROD_URL := https://gspp.berkeley.edu/assets/uploads/page/VROD-registry-files--2026-08.xlsx
 
-.PHONY: help setup data-download data demo-docs chain deploy api web reset test test-contracts test-backend eval e2e clean-runtime
+.PHONY: help setup data-download data demo-docs chain deploy api web reset test test-contracts test-backend eval e2e clean-runtime gas seed demo-check demo-validate demo-record docker-build docker-run
 
 help:
 	@echo "make setup        install Python, contract and web dependencies; create .env"
@@ -15,6 +15,10 @@ help:
 	@echo "make test         contract + backend tests"
 	@echo "make eval         run the evaluation and write eval/results/latest.json"
 	@echo "make data         download Berkeley VROD (~67 MB) and build the full registry index (optional)"
+	@echo "make seed         load the five-claim demo story; make demo-check prints its fingerprint"
+	@echo "make demo-validate replay the demo film's steps and check outcomes (fresh ledger)"
+	@echo "make demo-record  record the reference film to exports/demo_reference/ (fresh ledger)"
+	@echo "make docker-build / docker-run   build and run the single-container public demo on :7860"
 
 setup:
 	test -d $(VENV) || $(PY) -m venv $(VENV)
@@ -76,3 +80,16 @@ seed:
 
 demo-check:
 	$(VPY) backend/scripts/demo_fingerprint.py
+
+# Both need a FRESH ledger (make reset, restart make api, no seed) and make web running.
+demo-validate:
+	cd frontend && node qa/demo/validate.mjs
+
+demo-record:
+	cd frontend && node qa/demo/record.mjs
+
+docker-build:
+	docker build -t onceonly-demo:local .
+
+docker-run:
+	docker run --rm -p 127.0.0.1:7860:7860 onceonly-demo:local

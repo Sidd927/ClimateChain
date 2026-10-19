@@ -142,3 +142,42 @@ def test_api_health_and_create(tmp_env):
     assert [h["ref"] for h in hits] == ["OO-2026-0001"]
     assert c.get("/api/evidence/" + "0" * 64).json()["claims"] == []
     assert c.get("/api/evidence/not-a-hash").status_code == 422
+
+
+def test_public_demo_mode_refuses_ledger_writes_and_rate_limits(tmp_env, monkeypatch):
+    monkeypatch.setenv("ONCEONLY_PUBLIC_DEMO", "1")
+    monkeypatch.setenv("ONCEONLY_PUBLIC_RATE", "2")
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    c = TestClient(app)
+    assert c.get("/api/health").json()["public_demo"] is True
+    r = c.post("/api/claims", data={"claimant": "A (SYNTHETIC)", "text": cert("A", 896309560, 896310000)})
+    assert r.status_code == 201
+    cid = r.json()["id"]
+    for route, body in [("anchor", {}), ("challenge", {"reason": "x"}), ("resolve", {"upheld": True}), ("withdraw", None)]:
+        resp = c.post(f"/api/claims/{cid}/{route}", json=body) if body is not None else c.post(f"/api/claims/{cid}/{route}")
+        assert resp.status_code == 403 and resp.json()["detail"]["public_demo"] is True
+    assert c.post("/api/claims", data={"claimant": "B", "text": "x"}).status_code in (201, 422)
+    assert c.post("/api/claims", data={"claimant": "C", "text": "y"}).status_code == 429  # third within 10 min
+
+
+def test_static_frontend_and_spa_fallback(tmp_env, monkeypatch, tmp_path):
+    dist = tmp_path / "dist"
+    (dist / "assets").mkdir(parents=True)
+    (dist / "index.html").write_text("<!doctype html><title>OnceOnly</title>")
+    (dist / "assets" / "app.js").write_text("console.log(1)")
+    (dist / "favicon.svg").write_text("<svg/>")
+    monkeypatch.setenv("ONCEONLY_STATIC_DIR", str(dist))
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    c = TestClient(app)
+    assert "OnceOnly" in c.get("/claims/2").text  # client route falls back to index.html
+    assert c.get("/assets/app.js").text == "console.log(1)"
+    assert c.get("/favicon.svg").text == "<svg/>"
+    assert c.get("/api/health").json()["status"] == "ok"  # API still wins
+    assert c.get("/api/nope").status_code == 404
+    assert c.get("/../../etc/passwd").status_code in (200, 404) and "root:" not in c.get("/../../etc/passwd").text

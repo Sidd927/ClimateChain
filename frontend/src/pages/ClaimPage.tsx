@@ -8,6 +8,7 @@ import { Ruler } from "../components/Ruler";
 import { SerialAnatomy } from "../components/SerialAnatomy";
 import { findingOutcome, type Outcome } from "../lib/outcomes";
 import { stripToLanes } from "../lib/ruler";
+import { usePublicDemo } from "../lib/usePublicDemo";
 
 const EVENT: Record<string, { label: string; chain?: boolean }> = {
   submitted: { label: "Evidence submitted" },
@@ -51,6 +52,7 @@ export default function ClaimPage() {
   const [lastChain, setLastChain] = useState<any>(null);
   const [justAnchored, setJustAnchored] = useState<any>(null);
 
+  const publicDemo = usePublicDemo();
   const load = useCallback(() => api.claim(id!).then((x) => { setC(x); setErr(null); }).catch(setErr), [id]);
   useEffect(() => { load(); }, [load]);
 
@@ -92,6 +94,11 @@ export default function ClaimPage() {
   const actions = (
           <section className="space-y-3 rounded-sheet border border-rule bg-sheet p-4">
             <h2 className="text-sm font-semibold">Ledger actions</h2>
+            {publicDemo && (
+              <p className="rounded-panel border border-glacier/30 bg-glacier-wash px-3 py-2.5 text-[13px] leading-relaxed text-ink" role="note">
+                <strong className="font-semibold">Public demo instance.</strong> Ledger writes are disabled here so every visitor sees the same story. The seeded anchoring and the contract's rejection shown on this page are real transactions on the instance's local chain. Run OnceOnly locally to anchor or challenge claims.
+              </p>
+            )}
             {preAnchor && (
               <>
                 {blocking.length > 0 ? (
@@ -104,14 +111,14 @@ export default function ClaimPage() {
                 ) : (
                   <p className="text-sm text-ink-soft">Writes these unit ranges and the evidence fingerprint to ClaimLedger. This cannot be undone, only challenged or withdrawn.</p>
                 )}
-                <Button className="w-full" busy={busy === "anchor"} disabled={blocking.length > 0 || (review.length > 0 && !ack)} onClick={() => setPending("anchor")}>
+                <Button className="w-full" busy={busy === "anchor"} disabled={publicDemo || blocking.length > 0 || (review.length > 0 && !ack)} onClick={() => setPending("anchor")}>
                   <Stamp size={16} aria-hidden /> Anchor on ledger
                 </Button>
                 {blocking.length > 0 && <p className="text-xs text-muted">Disabled because of the blocking finding above.</p>}
                 {blocking.some((f) => f.rule_id === "DUP-001") && (
                   <div className="space-y-2 border-t border-rule pt-3">
                     <p className="text-xs leading-relaxed text-ink-soft">To show the rule lives in the contract and not only in this interface, you can send the registration to the chain anyway. It will be rejected and recorded as a failed transaction.</p>
-                    <Button variant="secondary" className="w-full" busy={busy === "force"} onClick={() => setPending("force")}>Send to the contract anyway</Button>
+                    <Button variant="secondary" className="w-full" busy={busy === "force"} disabled={publicDemo} onClick={() => setPending("force")}>Send to the contract anyway</Button>
                   </div>
                 )}
               </>
@@ -128,9 +135,9 @@ export default function ClaimPage() {
                   <span className="font-medium">Challenge this claim</span>
                   <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="What evidence suggests these units are not this claimant's to claim?" className="w-full rounded-[7px] border border-rule-strong bg-sheet p-2.5 text-sm" />
                 </label>
-                <Button variant="secondary" className="w-full" disabled={!reason.trim()} busy={busy === "challenge"} onClick={() => run("challenge", () => api.challenge(c.id, reason))}>Open challenge</Button>
+                <Button variant="secondary" className="w-full" disabled={publicDemo || !reason.trim()} busy={busy === "challenge"} onClick={() => run("challenge", () => api.challenge(c.id, reason))}>Open challenge</Button>
                 <p className="text-xs text-muted">Anyone can open a challenge. The units stay locked until a reviewer decides.</p>
-                <div className="border-t border-rule pt-3"><Button variant="quiet" onClick={() => setPending("withdraw")}>Withdraw claim and release its units</Button></div>
+                <div className="border-t border-rule pt-3"><Button variant="quiet" disabled={publicDemo} onClick={() => setPending("withdraw")}>Withdraw claim and release its units</Button></div>
               </>
             )}
             {c.status === "challenged" && (
@@ -140,8 +147,8 @@ export default function ClaimPage() {
                   <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Basis for the decision (recorded as a hash on chain)" className="w-full rounded-[7px] border border-rule-strong bg-sheet p-2.5 text-sm" />
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button variant="danger" onClick={() => setPending("uphold")}>Uphold</Button>
-                  <Button variant="secondary" onClick={() => setPending("dismiss")}>Dismiss</Button>
+                  <Button variant="danger" disabled={publicDemo} onClick={() => setPending("uphold")}>Uphold</Button>
+                  <Button variant="secondary" disabled={publicDemo} onClick={() => setPending("dismiss")}>Dismiss</Button>
                 </div>
                 <p className="text-xs text-muted">Upholding revokes the claim and releases its units. Dismissing returns it to active.</p>
               </>

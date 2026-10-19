@@ -83,6 +83,20 @@ Keep `make chain` running. Then:
 
 The fingerprint covers claim references, statuses, unit counts, finding rule IDs, evidence hashes, on-chain claim numbers and contract rejections; block numbers and timestamps are excluded. Three consecutive reset-and-seed runs produced the identical fingerprint `c544f589…6483b`.
 
+### Run it as one container
+
+A single Docker image bundles a private Hardhat chain (loopback only), the contract deployment, the seeded demo story and the API serving the built UI. It starts in **public demo mode**: ledger writes (anchor, challenge, resolve, withdraw) return 403 with an explanation, and claim checks are rate-limited (10 per IP per 10 minutes) and capped (200 per instance). State is ephemeral; every start reseeds the same story.
+
+```bash
+make docker-build
+```
+
+```bash
+make docker-run
+```
+
+Open http://127.0.0.1:7860. The container prints the demo fingerprint at boot. Details, environment variables and a prepared (not deployed) Render blueprint: [docs/submission/08_deployment_runbook.md](docs/submission/08_deployment_runbook.md).
+
 ### Optional AI extraction
 
 Put your own key in `.env` as `ANTHROPIC_API_KEY=...` (never commit it). Without a key, the deterministic parser is used and the UI says so.
@@ -109,7 +123,7 @@ cd frontend && npx playwright test
 
 That is 30 tests: 18 interaction tests, 4 keyboard-only walkthroughs, a link crawl and 7 axe-core WCAG A/AA checks. They expect the seeded demo story. Design research, critique, polish log and QA reports are in [docs/design/](docs/design/).
 
-`make test` runs 24 contract and 22 backend tests, and leaves the working tree clean. `make gas` regenerates `eval/results/gas.json`. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack; it needs a fresh ledger, so run it after `make reset` and an API restart, before `make seed`.
+`make test` runs 24 contract and 24 backend tests, and leaves the working tree clean. `make gas` regenerates `eval/results/gas.json`. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack; it needs a fresh ledger, so run it after `make reset` and an API restart, before `make seed`.
 
 | Result (from `eval/results/`) | Value |
 |---|---|
@@ -147,7 +161,7 @@ Claims come from competitors, brokers, auditors and registries in different juri
 
 ## Documentation
 
-`docs/00_mission_status.md` is the project status. Docs 01–16 cover requirements, judging strategy, competitive landscape, sources, idea selection, thesis, product requirements, architecture, data model, AI/blockchain design, security, evaluation and backlog.
+`docs/00_mission_status.md` is the project status. Hackathon submission material (Devpost copy, demo script, judge Q&A, deployment and QA reports) is in [docs/submission/](docs/submission/). Docs 01–16 cover requirements, judging strategy, competitive landscape, sources, idea selection, thesis, product requirements, architecture, data model, AI/blockchain design, security, evaluation and backlog.
 
 ## Data attribution
 
