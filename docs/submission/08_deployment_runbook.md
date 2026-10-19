@@ -85,7 +85,7 @@ Open http://127.0.0.1:7860. The container prints the demo fingerprint at boot; i
 
 1. Push `main` (already done for this commit).
 2. In Render: **New → Blueprint**, select `Sidd927/ClimateChain`, branch `main`. It reads `render.yaml` (`runtime: docker`, `plan: free`, health check `/api/health`, `autoDeploy: false`).
-3. Wait for the build (several minutes), then the boot (≈ 2 minutes at small CPU).
+3. Wait for the build (several minutes), then the boot (about 4 s at full CPU; 116 s measured at 0.1 CPU).
 4. Smoke test (replace the URL):
    - `curl -s https://<service>.onrender.com/api/health` should show `"public_demo":true` and `"chain":{"available":true,...}`.
    - `/claims/2` should load in a browser and show "4,559 units already back OO-2026-0001".
@@ -98,8 +98,8 @@ Open http://127.0.0.1:7860. The container prints the demo fingerprint at boot; i
 ## Measured container facts (2026-10-19)
 | Check | Result |
 |---|---|
-| Build | success, 2 min 04 s, image 2.05 GB |
-| Boot to healthy (4 CPU, Colima) | under 2 minutes (not timed precisely); fingerprint identical to local |
+| Build | success: 2 min 04 s cold; 24 s rebuild with cached layers; image 2.05 GB |
+| Boot to serving (4 CPU, Colima, rebuilt image, 2026-10-19 14:21 UTC) | 3.8 s from container start to Uvicorn listening (`docker logs -t`); fingerprint identical to local |
 | Boot under `--cpus=0.1 --memory=512m` | 116 s; 198 MB; not OOM-killed; fingerprint identical |
 | Warm response at 0.1 CPU | `/` 4 ms, `/api/claims/2` 2 ms, `/api/overview` 182 ms |
 | Restart | identical fingerprint |

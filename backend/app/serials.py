@@ -5,7 +5,7 @@ Unit numbers are only unique *within* a batch (measured on Berkeley VROD 2026-08
 Verra unit numbers restart across batches), so every block is keyed by
 ``(registry, batch_id)`` — the namespace used on chain.
 
-Supported formats (verified against VROD registry files, see scripts/audit_registry.py):
+Supported formats (verified against VROD registry files, see backend/scripts/build_reference.py):
 
 * Verra VCS:  ``18453-896309560-896329558-VCS-VCU-1507-VER-IN-1-1904-01092024-31122024-0``
 * Verra legacy (no "VCS-" segment): ``7056-367376734-367376744-VCU-263-VER-ID-14-674-01012016-31122016-1``
