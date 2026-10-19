@@ -26,14 +26,17 @@
 | S22 | Minespider, EU battery passport timeline — https://www.minespider.com/blog/eu-battery-regulation-timeline-explained-what-to-do-before-2027 | 2026 | DPP landscape (idea D) |
 | S23 | CarbonPlan OffsetsDB — https://carbonplan.org/research/offsets-db | 2026 | Updates paused; separate data terms → not used |
 
-## Measured facts we derived (reproducible: `make data-audit`)
+## Measured facts we derived (reproducible: `make data`)
 
 | Fact | Value | Script |
 |---|---|---|
-| Verra retirement rows in VROD 2026-08 registry files | 307,416 | `backend/scripts/audit_registry.py` |
+| Verra retirement rows in VROD 2026-08 registry files | 307,416 | `backend/scripts/build_reference.py` → `eval/results/registry_audit.json` |
 | Verra serials parsed by our parser | 307,416 (100%) | same |
 | Verra rows where end − start + 1 = quantity | 307,416 (100%) | same |
 | Overlapping retired ranges within the same Verra batch | 0 | same |
-| Overlaps if unit numbers are (wrongly) treated as globally unique | 11,631 → namespace must include the batch | same |
-| Verra rows with a Beneficial Owner recorded | 170,010 (55.3%) | same |
-| Gold Standard retirement rows | 166,478; 160,785 match the modern serial format (later extended to legacy) | same |
+| Overlaps if unit numbers are (wrongly) treated as globally unique | 11,629 → namespace must include the batch | same |
+| Verra rows with a Beneficial Owner recorded | 170,010 (55.3%); 44.7% have none | same |
+| Verra issuance rows parsed / quantity-consistent | 19,624 / 19,624 (100%) | same |
+| Gold Standard retirement rows parsed / quantity-consistent | 166,478 / 166,478 (100%) | same |
+| Gold Standard overlapping retirement pairs within a batch | 5 (inspected: mostly exact duplicate rows, one partial overlap with different dates). Reported as data inconsistencies, **not** as double retirement | same |
+| Retirements per Verra batch | median 2, p99 210, max 37,284 | same |

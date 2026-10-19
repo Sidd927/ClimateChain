@@ -1,0 +1,179 @@
+{
+  "generated_at": "2026-10-19T08:14:10Z",
+  "seed": 20261019,
+  "runtime_seconds": 5.6,
+  "double_use": {
+    "description": "270 labelled claim pairs (30 per case type). Each pair cites real Verra retirement records (Berkeley VROD 2026-08); claimants are synthetic. Positive = the new claim shares at least one unit with an anchored claim.",
+    "n": 270,
+    "positives": 180,
+    "negatives": 90,
+    "onceonly": {
+      "tp": 180,
+      "fp": 0,
+      "fn": 0,
+      "tn": 90,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "baseline": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 120,
+      "tn": 90,
+      "precision": 1.0,
+      "recall": 0.3333333333333333
+    },
+    "numbers_only": {
+      "tp": 180,
+      "fp": 30,
+      "fn": 0,
+      "tn": 60,
+      "precision": 0.8571428571428571,
+      "recall": 1.0
+    },
+    "contract": {
+      "tp": 180,
+      "fp": 0,
+      "fn": 0,
+      "tn": 90,
+      "precision": 1.0,
+      "recall": 1.0,
+      "register_gas_median": 304132
+    },
+    "contract_agrees_with_engine": 1.0,
+    "by_category": {
+      "exact_duplicate": {
+        "label": "Same serial, same units",
+        "truth": true,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 30,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "reformatted_duplicate": {
+        "label": "Same units, serial reformatted (line break, spaces, dashes)",
+        "truth": true,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 0,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "partial_overlap": {
+        "label": "Partial overlap, different serial strings",
+        "truth": true,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 0,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "contained": {
+        "label": "New range inside an existing claim",
+        "truth": true,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 0,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "superset": {
+        "label": "New range contains an existing claim",
+        "truth": true,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 0,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "reused_document": {
+        "label": "Same evidence document resubmitted",
+        "truth": true,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 30,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "adjacent": {
+        "label": "Adjacent ranges, no shared unit",
+        "truth": false,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 30,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "disjoint_same_batch": {
+        "label": "Same batch, disjoint ranges",
+        "truth": false,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 30,
+        "numbers_only_correct": 30,
+        "contract_correct": 30
+      },
+      "same_numbers_other_batch": {
+        "label": "Same unit numbers in a different batch",
+        "truth": false,
+        "n": 30,
+        "onceonly_correct": 30,
+        "baseline_correct": 30,
+        "numbers_only_correct": 0,
+        "contract_correct": 30
+      }
+    }
+  },
+  "extraction": {
+    "description": "60 synthetic document snippets citing real serial ranges, in 8 layouts: canonical, wrapped across lines, spaced dashes, en dashes, two blocks, table columns, prose range description, OCR letter-O errors. Truth = exact (batch, start, end) blocks.",
+    "methods": {
+      "parser": {
+        "label": "Deterministic parser",
+        "status": "ok",
+        "n": 60,
+        "doc_exact": 0.65,
+        "block_precision": 1.0,
+        "block_recall": 0.6865671641791045,
+        "per_variant": {
+          "canonical": {
+            "correct": 8,
+            "n": 8
+          },
+          "wrapped": {
+            "correct": 8,
+            "n": 8
+          },
+          "spaced_dashes": {
+            "correct": 8,
+            "n": 8
+          },
+          "en_dash": {
+            "correct": 8,
+            "n": 8
+          },
+          "two_blocks": {
+            "correct": 7,
+            "n": 7
+          },
+          "table_columns": {
+            "correct": 0,
+            "n": 7
+          },
+          "prose_range": {
+            "correct": 0,
+            "n": 7
+          },
+          "ocr_letter_o": {
+            "correct": 0,
+            "n": 7
+          }
+        }
+      },
+      "parser_plus_llm": {
+        "label": "Parser + AI extraction (cross-checked)",
+        "status": "not run (no ANTHROPIC_API_KEY)"
+      }
+    }
+  }
+}
