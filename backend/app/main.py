@@ -112,7 +112,39 @@ def health():
         "reference": {"loaded": r is not None, "scope": r.scope if r else None},
         "chain": {"available": ledger is not None, "error": err, **({"chain_id": ledger.chain_id, "address": ledger.address, "block_number": ledger.w3.eth.block_number, "public_network": ledger.chain_id != 31337} if ledger else {})},
         "llm": {"configured": llm_available(), "model": settings.llm_model if llm_available() else None},
+        "public_demo": settings.public_demo,
     }
+
+
+# ------------------------------------------------------------- public demo guards
+
+PUBLIC_WRITE_MESSAGE = (
+    "Ledger writes are disabled on this public demo instance so every visitor sees the same story. "
+    "The seeded anchoring and the contract's rejection are real transactions on the instance's local chain. "
+    "Run OnceOnly locally (see the README) to anchor, challenge or withdraw claims."
+)
+_submissions: dict[str, list[float]] = {}
+
+
+def guard_ledger_write():
+    if settings.public_demo:
+        raise service.ServiceError(403, PUBLIC_WRITE_MESSAGE, {"public_demo": True})
+
+
+def guard_claim_submission(request: Request):
+    if not settings.public_demo:
+        return
+    import time
+
+    total = con().execute("SELECT COUNT(*) FROM claims").fetchone()[0]
+    if total >= settings.public_max_claims:
+        raise service.ServiceError(429, "This public demo instance has reached its claim limit. It resets when restarted; the local version has no limit.", {"public_demo": True})
+    ip = (request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (request.client.host if request.client else "unknown"))
+    now = time.time()
+    recent = [t for t in _submissions.get(ip, []) if now - t < 600]
+    if len(recent) >= settings.public_rate_per_10min:
+        raise service.ServiceError(429, f"Too many claim checks from this address. The public demo allows {settings.public_rate_per_10min} per 10 minutes.", {"public_demo": True})
+    _submissions[ip] = [*recent, now]
 
 
 @app.get("/api/overview")
@@ -152,6 +184,7 @@ def list_claims():
 
 @app.post("/api/claims", status_code=201)
 async def create_claim(
+    request: Request,
     claimant: str = Form(...),
     claim_date: str | None = Form(None),
     period: str | None = Form(None),
@@ -161,6 +194,7 @@ async def create_claim(
     use_llm: bool | None = Form(None),
     files: list[UploadFile] | None = File(None),
 ):
+    guard_claim_submission(request)
     uploads = []
     for f in files or []:
         data = await f.read(settings.max_upload_bytes + 1)
@@ -188,6 +222,7 @@ class AnchorBody(BaseModel):
 
 @app.post("/api/claims/{claim_id}/anchor")
 def anchor(claim_id: int, body: AnchorBody):
+    guard_ledger_write()
     res = service.anchor(con(), ref(), claim_id, body.acknowledge_review, body.force)
     return {"result": res, "claim": claim_detail(claim_id)}
 
@@ -198,6 +233,7 @@ class ChallengeBody(BaseModel):
 
 @app.post("/api/claims/{claim_id}/challenge")
 def challenge(claim_id: int, body: ChallengeBody):
+    guard_ledger_write()
     res = service.challenge(con(), claim_id, body.reason)
     return {"result": res, "claim": claim_detail(claim_id)}
 
@@ -209,12 +245,14 @@ class ResolveBody(BaseModel):
 
 @app.post("/api/claims/{claim_id}/resolve")
 def resolve(claim_id: int, body: ResolveBody):
+    guard_ledger_write()
     res = service.resolve(con(), claim_id, body.upheld, body.note)
     return {"result": res, "claim": claim_detail(claim_id)}
 
 
 @app.post("/api/claims/{claim_id}/withdraw")
 def withdraw(claim_id: int):
+    guard_ledger_write()
     res = service.withdraw(con(), claim_id)
     return {"result": res, "claim": claim_detail(claim_id)}
 
@@ -344,3 +382,24 @@ def sample_file(name: str):
         raise HTTPException(404, "Unknown sample")
     media = "application/pdf" if name.endswith(".pdf") else "text/plain"
     return FileResponse(DEMO_DIR / name, media_type=media, filename=name)
+
+
+
+# ------------------------------------------------------- built frontend (optional)
+
+if settings.static_dir and (settings.static_dir / "index.html").exists():
+    from fastapi.staticfiles import StaticFiles
+
+    _static = settings.static_dir
+    app.mount("/assets", StaticFiles(directory=_static / "assets"), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def spa(full_path: str):
+        from fastapi.responses import FileResponse
+
+        if full_path.startswith("api/"):
+            raise HTTPException(404, "Not found")
+        candidate = (_static / full_path).resolve()
+        if full_path and candidate.is_file() and _static.resolve() in candidate.parents:
+            return FileResponse(candidate)  # e.g. favicon.svg
+        return FileResponse(_static / "index.html")  # client-side routes

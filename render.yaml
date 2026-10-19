@@ -1,0 +1,17 @@
+# Render Blueprint for the OnceOnly public demo instance. PREPARED, NOT DEPLOYED.
+# Deploying requires the owner's Render account and explicit approval (docs/submission/08_deployment_runbook.md).
+services:
+  - type: web
+    name: onceonly-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: false
+    envVars:
+      - key: ONCEONLY_PUBLIC_DEMO
+        value: "1"
+      - key: ONCEONLY_PUBLIC_MAX_CLAIMS
+        value: "200"
+      - key: ONCEONLY_PUBLIC_RATE
+        value: "10"

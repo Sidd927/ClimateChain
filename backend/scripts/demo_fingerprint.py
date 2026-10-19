@@ -9,10 +9,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 
 import httpx
 
-API = "http://127.0.0.1:8000"
+API = os.environ.get("ONCEONLY_API", "http://127.0.0.1:8000")
 
 
 def main() -> None:

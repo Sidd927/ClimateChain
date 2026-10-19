@@ -127,6 +127,12 @@ test.describe("claim detail", () => {
     await page.goto(`/claims/${helios.id}`);
     await expect(page.getByRole("button", { name: "Anchor on ledger" }).first()).toBeDisabled();
     await expect(page.getByText(/Disabled because of the blocking finding/).filter({ visible: true })).toBeVisible();
+    if ((await (await page.request.get("/api/health")).json()).public_demo) {
+      // public demo instance: ledger writes are refused server-side and the controls say why
+      await expect(page.getByRole("button", { name: "Send to the contract anyway" }).filter({ visible: true })).toBeDisabled();
+      await expect(page.getByText(/Public demo instance\./).filter({ visible: true })).toBeVisible();
+      return;
+    }
     await page.getByRole("button", { name: "Send to the contract anyway" }).click();
     const dialog = page.getByRole("dialog", { name: /Send a registration the contract should reject/ });
     await expect(dialog).toBeVisible();

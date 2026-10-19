@@ -76,3 +76,9 @@ seed:
 
 demo-check:
 	$(VPY) backend/scripts/demo_fingerprint.py
+
+docker-build:
+	docker build -t onceonly-demo:local .
+
+docker-run:
+	docker run --rm -p 127.0.0.1:7860:7860 onceonly-demo:local
