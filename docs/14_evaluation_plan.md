@@ -35,9 +35,13 @@ Design: 270 labelled claim pairs, 30 per case type, seeded (`20261019`). Each pa
 | Baseline: exact serial string or document hash match | 1.000 | **0.333** | 0 | 120 |
 | Ablation: interval overlap ignoring batch | **0.857** | 1.000 | 30 | 0 |
 
-Per case type: the baseline misses all reformatted, partial, contained and superset overlaps (0/30 each). The batch-blind ablation wrongly flags all 30 "same numbers, other batch" cases. The contract and engine agree on 100% of cases. Median gas for a single-range registration: 304,132.
+Per case type: the baseline misses all reformatted, partial, contained and superset overlaps (0/30 each). The batch-blind ablation wrongly flags all 30 "same numbers, other batch" cases. The contract and engine agree on 100% of cases.
 
 **How to read this honestly.** Perfect scores for OnceOnly are expected: the ground truth uses the same interval semantics the engine implements, so this verifies the implementation, not real-world accuracy. The informative results are (a) what simpler, commonly used methods miss, and (b) that the on-chain enforcement matches the off-chain engine exactly.
+
+## E2b — On-chain cost vs batch size (measured)
+
+Gas to register one range into a batch holding k active ranges: hinted list 301,452 at k = 10, 50 and 200 (flat); linear v0 314,288 → 423,408 → 832,608. Source: `eval/results/gas.json`, produced by the contract test suite. See doc 12.
 
 ## E3 — Serial extraction (synthetic documents, real serial ranges)
 
@@ -54,7 +58,7 @@ Parser by layout: canonical 8/8, wrapped 8/8, spaced dashes 8/8, en dash 8/8, tw
 
 | Suite | Count | Status (2026-10-19) |
 |---|---|---|
-| Contract (Hardhat/Mocha), incl. a 150-operation randomized invariant test against a reference model | 16 | passing |
+| Contract (Hardhat/Mocha), incl. a 150-op randomized model test, a 300-attempt adversarial-hint property test and a gas benchmark | 24 | passing |
 | Backend (pytest): parser formats, rules on real-data subset, API | 22 | passing |
 | End-to-end (`make e2e`): 13 checks across the full demo story on a live chain | 13 | passing |
 
@@ -63,4 +67,3 @@ Parser by layout: canonical 8/8, wrapped 8/8, spaced dashes 8/8, en dash 8/8, tw
 - Real-world prevalence of double use. We found no documented public case to test against.
 - Beneficiary matching quality (BEN-001) on real beneficiary/claimant pairs.
 - AI extraction accuracy, cost and latency (pending API key).
-- Gas behaviour for namespaces with many active claims (linear scan; see doc 12).

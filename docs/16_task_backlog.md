@@ -6,7 +6,7 @@ Status vocabulary: **Not started** · **In progress** · **Implemented** (code e
 
 | ID | Task | Status | Evidence |
 |---|---|---|---|
-| B-01 | ClaimLedger contract: non-overlap per (registry, batch), duplicate ref, challenge/resolve/withdraw | Verified E2E | 16 Hardhat tests; `make e2e` |
+| B-01 | ClaimLedger contract: non-overlap per (registry, batch), duplicate ref, challenge/resolve/withdraw | Verified E2E | 24 Hardhat tests; `make e2e` |
 | B-02 | Serial parser (Verra current/legacy/2025, Gold Standard current/legacy) | Tested | 8 pytest; 100% of 493,518 VROD rows |
 | B-03 | Registry reference index + audit from VROD | Tested | `eval/results/registry_audit.json` |
 | B-04 | Rules engine (EVD, SER, REG, BEN, DUP, AGG, EXT) | Tested | 14 service tests |
@@ -22,7 +22,7 @@ Status vocabulary: **Not started** · **In progress** · **Implemented** (code e
 | ID | Task | Status | Notes |
 |---|---|---|---|
 | B-11 | Measure AI extraction (E3) with a real API key; record cost and latency | Not started | **Needs ANTHROPIC_API_KEY from the account owner** |
-| B-12 | Scalable on-chain overlap check (hinted sorted linked list, O(1) verify) + gas benchmark vs namespace size | Not started | Max 37,284 retirements in one Verra batch makes the linear scan unsafe |
+| B-12 | Scalable on-chain overlap check (hinted sorted linked list, O(1) verify) + gas benchmark vs namespace size | Verified E2E | Flat 301,452 gas at k=10..200 vs linear 832,608 at k=200; adversarial-hint property test; e2e + eval replay pass |
 | B-13 | Public testnet deployment (e.g., Sepolia) + explorer links in UI | Not started | **Needs a funded test-only key**; otherwise stays local and labelled |
 | B-14 | Multi-document evidence commitment as a Merkle root (independent per-document verification) | Not started | Single-document claims are already independently verifiable |
 | B-15 | README, demo storyboard and script (docs 17–19), judge Q&A | Not started | |

@@ -177,7 +177,7 @@ def contract_replay(cases: list[dict]) -> dict:
         from eth_account import Account
         from web3 import Web3
 
-        from app.chain import b32, namespace
+        from app.chain import b32, namespace, ranges_with_hints
         from app.serials import find_serials
     except Exception as e:  # pragma: no cover
         return {"status": f"skipped ({e})"}
@@ -203,13 +203,16 @@ def contract_replay(cases: list[dict]) -> dict:
         A, B = find_serials(case["existing"]), find_serials(case["new"])
         rA = [(namespace(b.registry, b.batch_id), b.unit_start, b.unit_end) for b in A]
         rB = [(namespace(b.registry, b.batch_id), b.unit_start, b.unit_end) for b in B]
-        r = send(c.functions.registerClaim(b32(f"eval-{i}-a"), rA, b32("x"), b32("e"), b32("r")).build_transaction({"from": acct.address}))
+        r = send(c.functions.registerClaim(b32(f"eval-{i}-a"), ranges_with_hints(c, rA), b32("x"), b32("e"), b32("r")).build_transaction({"from": acct.address}))
         gas.append(r.gasUsed)
         try:
-            c.functions.registerClaim(b32(f"eval-{i}-b"), rB, b32("x"), b32("e"), b32("r")).call({"from": acct.address})
+            hB = ranges_with_hints(c, rB)
+            c.functions.registerClaim(b32(f"eval-{i}-b"), hB, b32("x"), b32("e"), b32("r")).call({"from": acct.address})
             rejected = False
-            send(c.functions.registerClaim(b32(f"eval-{i}-b"), rB, b32("x"), b32("e"), b32("r")).build_transaction({"from": acct.address}))
-        except Exception:
+            send(c.functions.registerClaim(b32(f"eval-{i}-b"), hB, b32("x"), b32("e"), b32("r")).build_transaction({"from": acct.address}))
+        except Exception as e:
+            if "BadHint" in str(e):
+                raise  # a hint error would be an adapter bug, not a detection result
             rejected = True
         preds.append(rejected)
     gas.sort()

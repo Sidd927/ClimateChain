@@ -50,6 +50,26 @@ def b32(hex_or_text: str) -> bytes:
     return keccak(text=hex_or_text)
 
 
+def ranges_with_hints(contract, ranges: list[tuple[bytes, int, int]]) -> list[tuple[bytes, int, int, int]]:
+    """Attach predecessor hints (O(k) eth_calls, off-chain) so registration verifies in O(1) on chain.
+
+    Ranges earlier in the same submission are accounted for: node ids are assigned
+    sequentially from nextNodeId(), so their ids are predictable (a concurrent
+    registration can make a hint stale; the contract then reverts with BadHint and
+    the caller retries)."""
+    base = contract.functions.nextNodeId().call()
+    out, inserted = [], []
+    for i, (ns, start, end) in enumerate(ranges):
+        hint = contract.functions.hintFor(ns, start).call()
+        hint_start = contract.functions.getNode(ns, hint).call()[0] if hint else -1
+        for x_ns, x_start, x_id in inserted:
+            if x_ns == ns and hint_start < x_start < start:
+                hint, hint_start = x_id, x_start
+        inserted.append((ns, start, base + i))
+        out.append((ns, start, end, hint))
+    return out
+
+
 class Ledger:
     def __init__(self):
         if not settings.deployment_file.exists():
@@ -170,7 +190,7 @@ class Ledger:
 
     def register(self, ref: str, blocks: list[dict], commitment: str, evidence_hash: str, report_hash: str, submit_on_revert: bool = False) -> dict:
         ranges = [(namespace(b["registry"], b["batch_id"]), int(b["unit_start"]), int(b["unit_end"])) for b in blocks]
-        fn = self.c.functions.registerClaim(b32(ref), ranges, b32(commitment), b32(evidence_hash), b32(report_hash))
+        fn = self.c.functions.registerClaim(b32(ref), ranges_with_hints(self.c, ranges), b32(commitment), b32(evidence_hash), b32(report_hash))
         rev = self._simulate(self.registrar, fn)
         if rev is not None:
             out = {"ok": False, "revert": rev.to_dict(), "submitted": False}

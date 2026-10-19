@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-10-19T08:19:43.085Z",
+  "note": "Gas for registering one single-range claim into a namespace that already holds k active ranges (Hardhat, solc 0.8.24, optimizer 200).",
+  "rows": [
+    {
+      "existing": 0,
+      "hinted": 333078,
+      "linear": 304108
+    },
+    {
+      "existing": 10,
+      "hinted": 301452,
+      "linear": 314288
+    },
+    {
+      "existing": 50,
+      "hinted": 301452,
+      "linear": 423408
+    },
+    {
+      "existing": 200,
+      "hinted": 301452,
+      "linear": 832608
+    }
+  ]
+}
