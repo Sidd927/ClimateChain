@@ -110,7 +110,7 @@ def health():
     return {
         "status": "ok",
         "reference": {"loaded": r is not None, "scope": r.scope if r else None},
-        "chain": {"available": ledger is not None, "error": err, **({"chain_id": ledger.chain_id, "address": ledger.address} if ledger else {})},
+        "chain": {"available": ledger is not None, "error": err, **({"chain_id": ledger.chain_id, "address": ledger.address, "block_number": ledger.w3.eth.block_number, "public_network": ledger.chain_id != 31337} if ledger else {})},
         "llm": {"configured": llm_available(), "model": settings.llm_model if llm_available() else None},
     }
 
@@ -302,3 +302,29 @@ def evaluation():
         if p.exists():
             out[name.removesuffix(".json")] = json.loads(p.read_text())
     return out
+
+
+# ------------------------------------------------------------- demo documents
+
+DEMO_DIR = ROOT / "data/demo"
+
+
+def _demo_manifest() -> list[dict]:
+    p = DEMO_DIR / "manifest.json"
+    return json.loads(p.read_text()) if p.exists() else []
+
+
+@app.get("/api/samples")
+def samples():
+    return _demo_manifest()
+
+
+@app.get("/api/samples/{name}")
+def sample_file(name: str):
+    from fastapi.responses import FileResponse
+
+    allowed = {m["file"] for m in _demo_manifest()}
+    if name not in allowed:  # only files listed in the manifest; no path traversal
+        raise HTTPException(404, "Unknown sample")
+    media = "application/pdf" if name.endswith(".pdf") else "text/plain"
+    return FileResponse(DEMO_DIR / name, media_type=media, filename=name)

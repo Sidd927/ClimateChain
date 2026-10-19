@@ -80,6 +80,15 @@ def name_similarity(a: str | None, b: str | None) -> int:
     return int(fuzz.token_set_ratio(na, nb))
 
 
+_PLACEHOLDER_BENEFICIARY = {"not disclosed", "undisclosed", "n a", "na", "none", "unknown", "confidential", "private"}
+
+
+def real_beneficiary(v: str | None) -> bool:
+    """Registry beneficiary fields sometimes hold placeholders such as 'Not Disclosed'."""
+    n = re.sub(r"[^a-z]+", " ", (v or "").lower()).strip()
+    return bool(n) and n not in _PLACEHOLDER_BENEFICIARY
+
+
 def fmt(n: int) -> str:
     return f"{n:,}"
 
@@ -177,10 +186,10 @@ def evaluate(
                                      f"The serial encodes project {b.project_id} / vintage {b.vintage}, but the registry record lists project {r.get('project_id')} / vintage {r.get('vintage')}.",
                                      next_action="Verify the serial against the registry.", evidence={"block": ev_block, "record": _slim(r)}, block_index=i))
             # beneficiary
-            bens = sorted({r["beneficiary"] for r in cov.records if r.get("beneficiary")})
+            bens = sorted({r["beneficiary"] for r in cov.records if real_beneficiary(r.get("beneficiary"))})
             if cov.records and not bens:
                 F.append(Finding("BEN-002", INFO, RULES["BEN-002"],
-                                 "The registry retirement record has no beneficiary, so the registry cannot confirm who is entitled to claim these units. This is common (44.7% of Verra retirement rows in VROD 2026-08 have no beneficial owner).",
+                                 "The registry retirement record has no beneficiary, so the registry cannot confirm who is entitled to claim these units. This is common: 44.7% of Verra retirement rows in Berkeley VROD 2026-08 record no beneficial owner.",
                                  uncertainty="Entitlement must come from the retiring account holder's allocation records.",
                                  next_action="Keep the broker's allocation confirmation with the claim evidence.", block_index=i))
             elif bens:
