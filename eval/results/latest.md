@@ -1,6 +1,6 @@
 # OnceOnly evaluation results
 
-Generated 2026-10-19T08:14:10Z (seed 20261019, 5.6 s). Reproduce with `make eval`.
+Generated 2026-10-19T08:20:23Z (seed 20261019, 7.9 s). Reproduce with `make eval`.
 
 ## A. Double-use detection
 
@@ -25,7 +25,7 @@ Generated 2026-10-19T08:14:10Z (seed 20261019, 5.6 s). Reproduce with `make eval
 | Same batch, disjoint ranges | 30 | not double use | 30/30 | 30/30 | 30/30 | 30/30 |
 | Same unit numbers in a different batch | 30 | not double use | 30/30 | 30/30 | 30/30 | 0/30 |
 
-Contract and rules engine agree on 100.0% of cases. Median gas for a single-range registration: 304,132.
+Contract and rules engine agree on 100.0% of cases. Median gas for a single-range registration: 333,102.
 
 ## B. Serial extraction
 

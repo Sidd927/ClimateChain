@@ -36,7 +36,8 @@
 
 | Function | Who | Effect |
 |---|---|---|
-| `registerClaim(ref, Range[] ranges, claimantCommitment, evidenceHash, reportHash)` | registrar role | Validates start ≤ end and that ranges in the same call don't overlap each other; checks every range against active claims in `ns`; reverts `RangeOverlap(ns, existingClaimId, overlapStart, overlapEnd)` on the first conflict |
+| `registerClaim(ref, RangeInput[] ranges, claimantCommitment, evidenceHash, reportHash)` | registrar role | Each `RangeInput` = (ns, start, end, prevHint). Validates start ≤ end; inserts into the namespace's sorted interval list after verifying both neighbours (O(1)); reverts `RangeOverlap(ns, existingClaimId, overlapStart, overlapEnd)` on a conflict, `InvalidRange` if ranges in the same call overlap, `BadHint` if the hint is wrong |
+| `hintFor(ns, start)`, `getNode(ns, id)`, `nextNodeId()` | anyone (view) | Off-chain hint computation (O(k) eth_call, free) |
 | `checkRange(ns, start, end)` | anyone (view) | Pre-flight: (free, conflictingClaimId, overlapStart, overlapEnd) |
 | `openChallenge(claimId, reasonHash)` | anyone | Active → Challenged (units stay locked) |
 | `resolveChallenge(claimId, upheld, resolutionHash)` | reviewer role | upheld → Revoked (units released); else → Active |
@@ -47,7 +48,16 @@
 
 **Squatting risk.** Someone could register a claim on units that aren't theirs to block the rightful owner. Mitigations: permissioned registrars, registry reconciliation before anchoring (the backend refuses REG-001), and the challenge/revoke path, which releases the units.
 
-**Gas.** Measured: median 304,132 gas for a single-range registration on an empty namespace (eval replay, 270 registrations). The overlap check is O(k) over ranges in the same `(registry, batch)` namespace. Measured on VROD, retirements per Verra batch have a median of 2 and a p99 of 210, but a maximum of 37,284. A linear scan cannot serve the largest batches. Planned fix: a hinted sorted linked list, where the caller supplies the predecessor and the contract verifies neighbours in O(1) (backlog B-12).
+**Gas and scalability (implemented, B-12).** Each namespace keeps its active ranges in a sorted, doubly linked list of disjoint intervals. `registerClaim` takes a predecessor hint per range (computed off-chain with the `hintFor` view) and checks only the two neighbours, so the cost is O(1) in the number of claims in a batch. A wrong or malicious hint can only cause `BadHint`; it can never admit an overlap. The proof: the list is sorted and disjoint, so if `prev.end < start` and `next.start > end`, no other node can intersect. This is tested by a 300-attempt adversarial random-hint property test.
+
+Measured (`eval/results/gas.json`, Hardhat, solc 0.8.24, optimizer 200). Gas to register one single-range claim into a batch already holding k active ranges:
+
+| k existing ranges | 0 | 10 | 50 | 200 |
+|---|---|---|---|---|
+| Hinted list (current) | 333,078 | 301,452 | 301,452 | 301,452 |
+| Linear scan (v0, `benchmark/ClaimLedgerLinear.sol`) | 304,108 | 314,288 | 423,408 | 832,608 |
+
+The linear v0 grows by about 2,700 gas per existing range. Extrapolated to the largest real Verra batch (37,284 retirements), it would far exceed a block gas limit, while the hinted list stays flat. k=0 is higher only because of one-time first writes for a new namespace.
 
 **Chain choice.** A local Hardhat network (chainId 31337) for the reproducible demo. The contract is EVM-generic; the deploy script supports any RPC (e.g., Sepolia) given a funded test key. We do not present local transactions as public-chain proof.
 

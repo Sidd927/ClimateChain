@@ -74,7 +74,7 @@ make eval
 make e2e
 ```
 
-`make test` runs 16 contract and 22 backend tests. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack.
+`make test` runs 24 contract and 22 backend tests. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack.
 
 | Result (from `eval/results/`) | Value |
 |---|---|
@@ -83,6 +83,7 @@ make e2e
 | False overlaps if the batch is ignored | 11,629, so ranges are keyed by registry **and** batch |
 | Double-use detection, 270 labelled pairs (OnceOnly / contract) | precision 1.000, recall 1.000 (expected by construction; see below) |
 | Same set, exact serial-string or document-hash baseline | recall 0.333 (misses every partial, contained, superset or reformatted overlap) |
+| On-chain registration gas, batch with 10 → 200 active claims | flat 301,452 (sorted interval list with O(1) hinted insert); linear v0 grows to 832,608 |
 | Deterministic serial extraction, 60 documents in 8 layouts | 65% exact; fails on tables, prose ranges and OCR errors (the AI extractor's job; not yet measured) |
 
 The labelled pairs are synthetic claims on real registry ranges, and ground truth uses the same interval definition as the engine. These numbers show the implementation is correct and that simpler methods miss cases. They are not real-world accuracy. Details: [docs/14_evaluation_plan.md](docs/14_evaluation_plan.md).
@@ -105,7 +106,6 @@ Claims come from competitors, brokers, auditors and registries in different juri
 ## Known limitations
 
 - Local development chain only; no public testnet deployment yet.
-- The on-chain overlap check is a linear scan per batch; very large batches need the planned O(1) hinted structure.
 - No authentication or multi-tenancy; one registrar key held by the backend.
 - AI extraction is implemented but not yet evaluated.
 - Registry snapshot ends 2026-08-31; later retirements show as "not found".

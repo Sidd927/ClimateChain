@@ -1,6 +1,6 @@
 # 00 — Mission Status (single source of truth)
 
-**Updated:** 2026-10-19 13:50 IST
+**Updated:** 2026-10-19 14:10 IST
 **Deadline:** Sun 25 Oct 2026, 14:00 UTC = **19:30 IST** (verified on the Devpost overview; see doc 01 §5). **Internal submit target: Sat 24 Oct, 21:00 IST.**
 **Project:** OnceOnly — every retired tonne, claimed once. Track: Carbon Markets & Emissions Transparency.
 
@@ -32,7 +32,7 @@
 
 | Command | Result |
 |---|---|
-| `make test-contracts` | 16 passing |
+| `make test-contracts` | 24 passing (incl. adversarial-hint property test, gas benchmark) |
 | `make test-backend` | 22 passing |
 | `make e2e` | 13/13 checks passing |
 | `make eval` | 270 pairs: OnceOnly and contract P=R=1.000; baseline recall 0.333; batch-blind ablation 30 FP. Parser extraction 65% exact docs |
@@ -40,15 +40,16 @@
 ## Known failures and gaps
 
 - AI extraction not measured. Parser fails on table-column, prose-range and OCR-error layouts (0/7 each).
-- On-chain overlap check is linear per batch; largest real Verra batch has 37,284 retirements.
 - Local chain only; GitHub repo is **private** (must be public for submission).
 - No auth; demo is single-tenant.
 
 ## Next three priorities
 
-1. **B-12**: O(1) hinted on-chain overlap check plus a gas benchmark. This answers the most likely blockchain-judge objection.
-2. **B-15/B-16**: demo storyboard and script (docs 17–19) and a clean-clone setup test.
-3. **B-11/B-13**: measure AI extraction and deploy to a public testnet, *if the owner provides keys*.
+1. **B-15/B-16**: demo storyboard and script (docs 17–19), judge Q&A, and a clean-clone setup test.
+2. **B-11/B-13**: measure AI extraction and deploy to a public testnet, *if the owner provides keys*.
+3. **B-17**: Devpost text, compliance checklist, release notes; UI polish pass.
+
+Done since last update: **B-12 scalable contract.** On-chain cost is now O(1) per registration via hinted sorted interval lists. Measured flat at 301,452 gas from 10 to 200 claims per batch (linear v0: 832,608 at 200).
 
 ## Decisions needed from the owner
 
