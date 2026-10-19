@@ -38,11 +38,10 @@ def document_text(filename: str, data: bytes) -> str:
 _QTY_RE = re.compile(r"(?:quantity|qty|amount|total)[^\d\n]{0,30}([\d][\d,\. ]{0,15}\d|\d)", re.I)
 _BEN_RE = re.compile(r"(?:beneficiary|beneficial owner|retired on behalf of|on behalf of|using entity)\s*[:\-]?\s*(.+)", re.I)
 _DATE_RE = re.compile(r"(?:retirement date|date of retirement|retired on)\s*[:\-]?\s*(\d{4}-\d{2}-\d{2}|\d{1,2}[/.]\d{1,2}[/.]\d{4}|\d{1,2} \w+ \d{4})", re.I)
-_UNSERIAL_RE = re.compile(
-    r"(?P<reg>VCS|Verra|Gold Standard|GS)\b[^\n]{0,40}?(?:project|ID|GS)\s*(?:ID)?\s*#?\s*(?P<pid>\d{2,6})"
-    r"[^\n]{0,80}?vintage\s*(?P<vin>\d{4})[^\n]{0,80}?(?P<qty>\d[\d,\.]*)\s*(?:tCO2e|tonnes|t|VCUs|VERs|credits)",
-    re.I,
-)
+_U_REG = re.compile(r"\b(VCS|Verra|Gold Standard|GS)\b", re.I)
+_U_PID = re.compile(r"\b(?:project|GS ?ID|ID)\s*(?:ID)?\s*#?\s*(?:GS)?(\d{2,6})\b", re.I)
+_U_VIN = re.compile(r"\bvintage\s*(\d{4})\b", re.I)
+_U_QTY = re.compile(r"(\d[\d,\.]*)\s*(?:tCO2e|tonnes|t\b|VCUs|VERs|credits)", re.I)
 
 
 def _key(b: SerialBlock) -> tuple:
@@ -87,11 +86,12 @@ def deterministic_extract(text: str) -> Extraction:
     date = m.group(1) if (m := _DATE_RE.search(text)) else None
     uns = []
     if not blocks:
-        for m in _UNSERIAL_RE.finditer(text):
-            reg = "GS" if m.group("reg").upper() in ("GS", "GOLD STANDARD") else "VCS"
-            q = _num(m.group("qty"))
-            if q:
-                uns.append(UnserializedAssertion(reg, m.group("pid"), m.group("vin"), q, m.group(0)[:200]))
+        # heuristic: registry, project, vintage and quantity mentioned in the same sentence, any order
+        for sent in re.split(r"(?<=[.;])\s+|\n+", text):
+            r, p, v, q = _U_REG.search(sent), _U_PID.search(sent), _U_VIN.search(sent), _U_QTY.search(sent)
+            if r and p and v and q and _num(q.group(1)):
+                reg = "GS" if r.group(1).upper() in ("GS", "GOLD STANDARD") else "VCS"
+                uns.append(UnserializedAssertion(reg, p.group(1), v.group(1), _num(q.group(1)), sent.strip()[:200]))
     return Extraction(
         blocks=blocks, stated_quantity=qty, beneficiary=ben, retirement_date=date, unserialized=uns,
         parser_keys={_key(b) for b in blocks},

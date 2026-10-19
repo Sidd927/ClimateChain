@@ -22,3 +22,4 @@ data/reference/registry_full.sqlite
 var/
 *.log
 .DS_Store
+.claude/
