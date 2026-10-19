@@ -28,6 +28,6 @@ Twelve judges. Most of them chair or belong to IEEE Blockchain working groups (T
 
 ## The 30-second hook
 
-> "Since 2025, VCMI requires companies to publish the serial numbers of the carbon credits behind their claims. The registry already stops a credit from being retired twice. But nothing stops two companies from citing the same retired units. We built the missing check: a public ledger where every claimed tonne can be claimed exactly once, enforced by a smart contract and checked against 470,000 real registry retirements."
+> "Since 2025, VCMI's Claims Code asks companies to disclose the serial numbers of the credits behind their claims. Registries already stop a credit from being retired twice. But we found no shared, automatic check of whether two companies cite the same retired units. We built the missing check: a public ledger where every claimed tonne can be claimed exactly once, enforced by a smart contract and checked against 473,894 real registry retirement records."
 
-(Every number in that pitch must be traceable: 307,416 Verra + 160,785 parsed Gold Standard retirement rows, from doc 14.)
+(Every number in that pitch must be traceable: 307,416 Verra + 166,478 Gold Standard retirement rows, all parsed; see doc 04 and `eval/results/registry_audit.json`.)

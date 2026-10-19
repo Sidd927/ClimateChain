@@ -19,13 +19,14 @@
 |---|---|
 | Task | Read retirement certificate or claim text; output JSON: claimant, beneficiary, retirement_date, blocks[{serial, quantity, project_id, vintage}] |
 | Why rules alone fall short | Layouts vary: serials split across lines or columns, ranges written in prose ("units 1,001 to 2,000 of batch 18453"), quantities formatted as "12.000" or "12,000 tCO2e". Regexes catch canonical serials; prose and broken layouts need language understanding |
-| Model | Configurable via `ONCEONLY_LLM_MODEL`; default `claude-haiku-4-5` (low latency and cost). Structured JSON output, pydantic-validated |
+| Model | Configurable via `ONCEONLY_LLM_MODEL`; default `claude-opus-5-5`. Called through the official `anthropic` SDK's `messages.parse` with a pydantic schema (structured output). The key and base URL are passed explicitly, never inherited from the environment |
 | Validation | Each AI serial is re-parsed by the deterministic parser; quantity = range size is checked; AI blocks that fail parsing are dropped with EXT-002 |
 | Uncertainty | Block source tag: `both` (agree), `parser-only`, `llm-only` (review). Disagreement → EXT-001 |
 | Errors | Timeout, no key, or invalid JSON → parser-only with an EXT-000 info finding |
 | Never | The LLM does not judge legitimacy, quality, or fraud. Rules decide; humans resolve |
 | Evaluation | Labeled synthetic certificate set (canonical, broken-line, prose formats). Field-level exact-match accuracy for parser-only vs parser+LLM (`make eval`) |
-| Cost/latency | One call per document, roughly 1–3k input tokens; latency ~1–3 s; skipped when parser and layout are canonical (optional optimization) |
+| Cost/latency | One call per document (typically 1–3k input tokens). Not yet measured; to be recorded when the extractor is evaluated with a key. A cheaper model can be set via `ONCEONLY_LLM_MODEL` |
+| Measured motivation | Parser alone: 65% of documents exact across 8 layouts; fails on table columns, prose ranges and OCR errors, with block precision 1.000 (it never invents a block). See doc 14 |
 
 ## Blockchain feature: ClaimLedger
 
@@ -46,7 +47,7 @@
 
 **Squatting risk.** Someone could register a claim on units that aren't theirs to block the rightful owner. Mitigations: permissioned registrars, registry reconciliation before anchoring (the backend refuses REG-001), and the challenge/revoke path, which releases the units.
 
-**Gas.** The overlap check is O(k) over ranges in the same `(registry, batch)` namespace. Batches are typically split into a modest number of retirements (measured distribution in doc 14). A production version would use a sorted structure or Merkle batching.
+**Gas.** Measured: median 304,132 gas for a single-range registration on an empty namespace (eval replay, 270 registrations). The overlap check is O(k) over ranges in the same `(registry, batch)` namespace. Measured on VROD, retirements per Verra batch have a median of 2 and a p99 of 210, but a maximum of 37,284. A linear scan cannot serve the largest batches. Planned fix: a hinted sorted linked list, where the caller supplies the predecessor and the contract verifies neighbours in O(1) (backlog B-12).
 
 **Chain choice.** A local Hardhat network (chainId 31337) for the reproducible demo. The contract is EVM-generic; the deploy script supports any RPC (e.g., Sepolia) given a funded test key. We do not present local transactions as public-chain proof.
 
