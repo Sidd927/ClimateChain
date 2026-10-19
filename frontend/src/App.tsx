@@ -36,7 +36,7 @@ function NotFound() {
     <div className="max-w-xl space-y-4 py-10">
       <h1 className="text-3xl font-bold tracking-tight">This page isn't on the ledger.</h1>
       <p className="text-ink-soft">The address doesn't match any OnceOnly page. Claims live under the claims ledger, by their number.</p>
-      <div className="flex gap-3"><LinkButton to="/claims">Open the claims ledger</LinkButton><LinkButton to="/" variant="secondary">Go to the story</LinkButton></div>
+      <div className="flex flex-wrap gap-3"><LinkButton to="/claims">Open the claims ledger</LinkButton><LinkButton to="/" variant="secondary">Go to the story</LinkButton></div>
     </div>
   );
 }

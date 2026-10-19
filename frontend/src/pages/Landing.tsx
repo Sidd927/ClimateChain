@@ -54,7 +54,7 @@ function HeroInstrument() {
   const overlap = stage >= 3;
 
   return (
-    <div className="relative rounded-sheet border border-night-line bg-night/70 p-4 shadow-[0_30px_80px_-40px_rgb(0_0_0/0.8)] backdrop-blur-[2px] sm:p-6">
+    <div className="relative min-h-[40rem] rounded-sheet border border-night-line bg-night/70 p-4 sm:min-h-[37rem] shadow-[0_30px_80px_-40px_rgb(0_0_0/0.8)] backdrop-blur-[2px] sm:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="text-[13px] text-night-text"><span className="font-mono text-white">VCS:18453</span> · units {fmt(REAL.start)}–{fmt(REAL.end)}</div>
         <span className="rounded-token border border-night-line px-2 py-0.5 text-[11px] text-night-text">Illustration · real retirement, synthetic claims</span>
@@ -157,9 +157,9 @@ export default function Landing() {
       <div className="on-night relative overflow-hidden bg-night text-white">
         <ContourField />
         <SiteHeader />
-        <section id="story" className="relative mx-auto grid max-w-[1240px] gap-10 px-5 pt-10 pb-16 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-14 lg:pt-16 lg:pb-24">
-          <div className="space-y-6">
-            <p className="text-sm text-night-text">
+        <section id="story" className="relative mx-auto grid max-w-[1240px] gap-10 px-5 pt-10 pb-16 sm:px-8 lg:grid-cols-2 lg:items-start lg:gap-14 lg:pt-14 lg:pb-24">
+          <div className="space-y-6 lg:pt-24">
+            <p className="min-h-[2.6rem] text-sm text-night-text sm:min-h-[1.3rem]">
               {o?.chain?.block_number != null
                 ? <>Running now on a local dev chain · block <span className="font-mono text-white">{o.chain.block_number}</span> · {anchored} claim{anchored === 1 ? "" : "s"} anchored</>
                 : "Carbon credit claim integrity"}

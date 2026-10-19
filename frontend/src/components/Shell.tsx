@@ -114,7 +114,7 @@ export function SiteHeader() {
         <div className="ml-2"><NavLinks items={SITE_NAV} night /></div>
         <div className="ml-auto flex items-center gap-3">
           <span className="hidden lg:inline-flex"><LedgerStatus night /></span>
-          <LinkButton to="/overview" variant="night" className="hidden py-2! sm:inline-flex">Open the ledger</LinkButton>
+          <span className="hidden sm:inline-flex"><LinkButton to="/overview" variant="night" className="py-2!">Open the ledger</LinkButton></span>
           <MobileMenu items={[{ to: "/overview", label: "Overview" }, { to: "/claims", label: "Claims" }, ...SITE_NAV]} night />
         </div>
       </div>
@@ -133,7 +133,7 @@ export function AppLayout() {
           <NavLinks items={APP_NAV} />
           <div className="ml-auto flex items-center gap-3">
             <span className="hidden lg:inline-flex"><LedgerStatus /></span>
-            <LinkButton to="/claims/new" className={`py-2! ${pathname === "/claims/new" ? "ring-2 ring-glacier/40 ring-offset-1" : ""}`} aria-current={pathname === "/claims/new" ? "page" : undefined}>
+            <LinkButton to="/claims/new" className={`px-3! py-2! sm:px-4! ${pathname === "/claims/new" ? "ring-2 ring-glacier/40 ring-offset-1" : ""}`} aria-current={pathname === "/claims/new" ? "page" : undefined}>
               Check a claim
             </LinkButton>
             <MobileMenu items={APP_NAV} />

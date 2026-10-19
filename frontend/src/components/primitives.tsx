@@ -15,7 +15,7 @@ const VARIANT: Record<Variant, string> = {
   night: "bg-[#e9f2ef] text-night hover:bg-white",
   "night-ghost": "text-night-text border border-night-line hover:border-night-text hover:text-white",
 };
-const BASE = "press inline-flex items-center justify-center gap-2 rounded-[7px] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-45";
+const BASE = "press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[7px] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-45";
 
 export function Button({ variant = "primary", busy, className = "", children, disabled, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; busy?: boolean }) {
   return (

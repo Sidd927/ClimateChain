@@ -10,6 +10,10 @@ Carbon registries make sure a credit is retired only once. What they don't cover
 4. **Anchors on a smart contract.** `ClaimLedger` stores only unit ranges and hashes, and **itself rejects** any range that overlaps an active claim (`RangeOverlap`).
 5. **Lets anyone verify.** Claim status and evidence fingerprints are read straight from the contract. Anyone can open a challenge; reviewers can uphold one (releasing the units) or dismiss it.
 
+![OnceOnly landing: the Ruler places two claims on a real Verra retirement and hatches the units claimed twice](docs/img/landing-hero.png)
+
+![Claim detail: verdict, the interactive Ruler with the overlap readout, and the contract's rejection](docs/img/claim-overlap.png)
+
 ## What is real and what is synthetic
 
 | | |
@@ -42,7 +46,11 @@ make deploy && make api
 make web
 ```
 
-Open http://127.0.0.1:5173. On **Check a claim**, use the sample statements in order: clean claim → overlapping claim (blocked; try *Send to the contract anyway*) → two registries → mistyped serial → claim without serials.
+Open http://127.0.0.1:5173 for the story, or http://127.0.0.1:5173/overview for the application. On **Check a claim**, use the sample statements in order: clean claim → overlapping claim (blocked; try *Send to the contract anyway*) → two registries → mistyped serial → claim without serials. To preload that whole story through the API, run:
+
+```bash
+make seed
+```
 
 The repo ships a curated real-data subset (`data/reference/demo_subset.csv.gz`, 38k rows) that covers every demo scenario. For the full 493k-row index and the registry audit, run:
 
@@ -73,6 +81,14 @@ make eval
 ```bash
 make e2e
 ```
+
+Frontend checks run against the live, seeded stack (Playwright drives your installed Chrome, so no browser download is needed):
+
+```bash
+cd frontend && npx playwright test
+```
+
+That is 15 interaction tests and 7 axe-core WCAG A/AA checks. Design research, audit and visual QA are in [docs/design/](docs/design/).
 
 `make test` runs 24 contract and 22 backend tests. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack.
 

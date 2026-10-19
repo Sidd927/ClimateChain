@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T09:15:32.093Z",
+  "generated_at": "2026-10-19T10:06:24.473Z",
   "note": "Gas for registering one single-range claim into a namespace that already holds k active ranges (Hardhat, solc 0.8.24, optimizer 200).",
   "rows": [
     {

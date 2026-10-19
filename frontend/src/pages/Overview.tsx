@@ -41,7 +41,7 @@ export default function Overview() {
           ["Flagged for double use", fmt(o?.claims?.with_double_use_findings), "Claims with a DUP-001 finding"],
           ["Rejected by contract", fmt(o?.claims?.chain_rejections), "Failed registrations, recorded on chain"],
         ].map(([k, v, d]) => (
-          <div key={k} className="bg-sheet p-5"><dt className="text-xs text-muted">{k}</dt><dd className="mt-1 text-[28px] leading-none font-bold tracking-tight">{o ? v : "…"}</dd><p className="mt-2 text-xs text-ink-soft">{d}</p></div>
+          <div key={k} className="bg-sheet p-5"><dt className="text-xs text-muted">{k}</dt><dd className="mt-1 text-[28px] leading-none font-bold tracking-tight">{o ? v : "…"}</dd><dd className="mt-2 text-xs text-ink-soft">{d}</dd></div>
         ))}
       </dl>
 

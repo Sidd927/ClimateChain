@@ -6,8 +6,8 @@ import { memo, useMemo } from "react";
  * Generated once per mount; decorative (aria-hidden). Optional slow CSS drift,
  * disabled under prefers-reduced-motion.
  */
-const W = 160;
-const H = 90;
+const W = 112;
+const H = 63;
 
 type Hill = [x: number, y: number, r: number, h: number];
 const HILLS: Hill[] = [
@@ -48,7 +48,7 @@ function contours(levels: number[]) {
           6: [[top, bottom]], 7: [[left, top]], 8: [[left, top]], 9: [[top, bottom]], 10: [[left, bottom], [top, right]],
           11: [[top, right]], 12: [[left, right]], 13: [[bottom, right]], 14: [[left, bottom]],
         }[idx] as [number, number][][];
-        for (const [p, q] of segs) d += `M${(p[0] * sx).toFixed(1)} ${(p[1] * sy).toFixed(1)}L${(q[0] * sx).toFixed(1)} ${(q[1] * sy).toFixed(1)}`;
+        for (const [p, q] of segs) d += `M${Math.round(p[0] * sx)} ${Math.round(p[1] * sy)}L${Math.round(q[0] * sx)} ${Math.round(q[1] * sy)}`;
       }
     }
     return d;
@@ -56,9 +56,10 @@ function contours(levels: number[]) {
 }
 
 const LEVELS = Array.from({ length: 16 }, (_, k) => -0.45 + k * 0.1);
+let cached: string[] | null = null; // geometry is identical everywhere: compute once per page load
 
 export const ContourField = memo(function ContourField({ className = "", drift = true }: { className?: string; drift?: boolean }) {
-  const paths = useMemo(() => contours(LEVELS), []);
+  const paths = useMemo(() => (cached ??= contours(LEVELS)), []);
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden>
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" className={`h-full w-full ${drift ? "contour-drift" : ""}`}>
