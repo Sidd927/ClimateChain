@@ -149,7 +149,8 @@ export function Ruler({
                 const left = pct(o.start), w = wid(o.start, o.end), mid = left + w / 2;
                 const align = mid < 22 ? "left" : mid > 78 ? "right" : "center";
                 return (
-                  <div key={k} className={animate ? "ruler-flash" : ""} style={{ "--delay": ovDelay } as CSSProperties}>
+                  // inset-0: the flash animates `filter`, which makes this wrapper the containing block of the bracket and label
+                  <div key={k} className={`absolute inset-0 ${animate ? "ruler-flash" : ""}`} style={{ "--delay": ovDelay } as CSSProperties}>
                     <div className={`absolute bottom-0 h-2.5 border-x-2 border-t-2 ${night ? "border-crimson-bright" : "border-crimson"}`} style={{ left: `${left}%`, width: `${w}%` }} />
                     <div
                       className={`absolute bottom-3.5 text-[13px] font-semibold whitespace-nowrap ${alarm}`}
