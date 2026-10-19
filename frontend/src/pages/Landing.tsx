@@ -242,7 +242,7 @@ export default function Landing() {
               <tbody className="divide-y divide-rule border-b border-rule">
                 {CHECKS.map((c) => (
                   <tr key={c.title} className="grid gap-1.5 py-4 md:table-row md:py-0">
-                    <th scope="row" className="font-semibold md:w-[24%] md:py-4 md:pr-6 md:align-top"><div className="flex flex-wrap items-center gap-2">{c.title}<OutcomeToken outcome={c.outcome} /></div></th>
+                    <th scope="row" className="font-semibold md:w-[24%] md:py-4 md:pr-6 md:align-top"><div className="flex flex-col items-start gap-1.5">{c.title}<OutcomeToken outcome={c.outcome} /></div></th>
                     <td className="leading-relaxed md:w-[42%] md:py-4 md:pr-6 md:align-top"><span className="text-xs font-semibold text-lichen md:hidden">Establishes · </span>{c.establishes}</td>
                     <td className="leading-relaxed text-ink-soft md:py-4 md:align-top"><span className="text-xs font-semibold md:hidden">Does not establish · </span>{c.not}</td>
                   </tr>

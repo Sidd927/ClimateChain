@@ -59,6 +59,9 @@ test: test-contracts test-backend
 test-contracts:
 	cd contracts && npx hardhat test
 
+gas:
+	cd contracts && WRITE_GAS=1 npx hardhat test --grep gas
+
 test-backend:
 	cd backend && ../$(VPY) -m pytest -q -p no:warnings
 
@@ -70,3 +73,6 @@ e2e:
 
 seed:
 	$(VPY) backend/scripts/seed_demo.py
+
+demo-check:
+	$(VPY) backend/scripts/demo_fingerprint.py

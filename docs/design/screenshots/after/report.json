@@ -4,7 +4,7 @@
     "route": "/",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Every retired tonne, claimed once."
@@ -16,7 +16,7 @@
     "route": "/overview",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Overview"
@@ -28,7 +28,7 @@
     "route": "/claims",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Claims ledger"
@@ -40,7 +40,7 @@
     "route": "/claims/new",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Check a claim"
@@ -52,7 +52,7 @@
     "route": "/claims/1",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Northwind Foods"
@@ -64,7 +64,7 @@
     "route": "/claims/2",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Helios Apparel"
@@ -73,22 +73,22 @@
   },
   {
     "viewport": "desktop-1440",
-    "route": "/claims/3",
+    "route": "/claims/4",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
-      "Arbor Logistics"
+      "Lumen Retail"
     ],
-    "file": "desktop-1440_claims_3.png"
+    "file": "desktop-1440_claims_4.png"
   },
   {
     "viewport": "desktop-1440",
     "route": "/claims/5",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Kestrel Media"
@@ -100,7 +100,7 @@
     "route": "/verify",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Verify a claim"
@@ -112,7 +112,7 @@
     "route": "/evidence",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "Evidence"
@@ -124,7 +124,7 @@
     "route": "/nope",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1440,
+    "scrollWidth": 1425,
     "clientWidth": 1440,
     "h1": [
       "This page isn't on the ledger."
@@ -140,7 +140,7 @@
     "route": "/",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Every retired tonne, claimed once."
@@ -152,7 +152,7 @@
     "route": "/overview",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Overview"
@@ -164,7 +164,7 @@
     "route": "/claims",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Claims ledger"
@@ -176,7 +176,7 @@
     "route": "/claims/new",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Check a claim"
@@ -188,7 +188,7 @@
     "route": "/claims/1",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Northwind Foods"
@@ -200,7 +200,7 @@
     "route": "/claims/2",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Helios Apparel"
@@ -209,22 +209,22 @@
   },
   {
     "viewport": "laptop-1280",
-    "route": "/claims/3",
+    "route": "/claims/4",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
-      "Arbor Logistics"
+      "Lumen Retail"
     ],
-    "file": "laptop-1280_claims_3.png"
+    "file": "laptop-1280_claims_4.png"
   },
   {
     "viewport": "laptop-1280",
     "route": "/claims/5",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Kestrel Media"
@@ -236,7 +236,7 @@
     "route": "/verify",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Verify a claim"
@@ -248,7 +248,7 @@
     "route": "/evidence",
     "status": 200,
     "overflowX": false,
-    "scrollWidth": 1280,
+    "scrollWidth": 1265,
     "clientWidth": 1280,
     "h1": [
       "Evidence"
@@ -345,15 +345,15 @@
   },
   {
     "viewport": "tablet-768",
-    "route": "/claims/3",
+    "route": "/claims/4",
     "status": 200,
     "overflowX": false,
     "scrollWidth": 768,
     "clientWidth": 768,
     "h1": [
-      "Arbor Logistics"
+      "Lumen Retail"
     ],
-    "file": "tablet-768_claims_3.png"
+    "file": "tablet-768_claims_4.png"
   },
   {
     "viewport": "tablet-768",
@@ -481,15 +481,15 @@
   },
   {
     "viewport": "mobile-390",
-    "route": "/claims/3",
+    "route": "/claims/4",
     "status": 200,
     "overflowX": false,
     "scrollWidth": 390,
     "clientWidth": 390,
     "h1": [
-      "Arbor Logistics"
+      "Lumen Retail"
     ],
-    "file": "mobile-390_claims_3.png"
+    "file": "mobile-390_claims_4.png"
   },
   {
     "viewport": "mobile-390",
@@ -617,15 +617,15 @@
   },
   {
     "viewport": "mobile-320",
-    "route": "/claims/3",
+    "route": "/claims/4",
     "status": 200,
     "overflowX": false,
     "scrollWidth": 320,
     "clientWidth": 320,
     "h1": [
-      "Arbor Logistics"
+      "Lumen Retail"
     ],
-    "file": "mobile-320_claims_3.png"
+    "file": "mobile-320_claims_4.png"
   },
   {
     "viewport": "mobile-320",

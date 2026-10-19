@@ -58,11 +58,30 @@ The repo ships a curated real-data subset (`data/reference/demo_subset.csv.gz`, 
 make data
 ```
 
-To reset to a clean demo (keep `make chain` running, then restart `make api`):
+### Reset to the exact demo story
 
-```bash
-make reset
-```
+Keep `make chain` running. Then:
+
+1. Clear the app database and evidence store, and deploy a fresh ClaimLedger:
+
+   ```bash
+   make reset
+   ```
+
+2. Restart the API (stop `make api` and start it again) so it uses the new contract.
+3. Replay the five-claim story through the real API:
+
+   ```bash
+   make seed
+   ```
+
+4. Print the demo's state fingerprint:
+
+   ```bash
+   make demo-check
+   ```
+
+The fingerprint covers claim references, statuses, unit counts, finding rule IDs, evidence hashes, on-chain claim numbers and contract rejections; block numbers and timestamps are excluded. Three consecutive reset-and-seed runs produced the identical fingerprint `c544f589…6483b`.
 
 ### Optional AI extraction
 
@@ -88,9 +107,9 @@ Frontend checks run against the live, seeded stack (Playwright drives your insta
 cd frontend && npx playwright test
 ```
 
-That is 15 interaction tests and 7 axe-core WCAG A/AA checks. Design research, audit and visual QA are in [docs/design/](docs/design/).
+That is 30 tests: 18 interaction tests, 4 keyboard-only walkthroughs, a link crawl and 7 axe-core WCAG A/AA checks. They expect the seeded demo story. Design research, critique, polish log and QA reports are in [docs/design/](docs/design/).
 
-`make test` runs 24 contract and 22 backend tests. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack.
+`make test` runs 24 contract and 22 backend tests, and leaves the working tree clean. `make gas` regenerates `eval/results/gas.json`. `make eval` writes `eval/results/latest.md`. `make e2e` runs a 13-step walkthrough against the running stack; it needs a fresh ledger, so run it after `make reset` and an API restart, before `make seed`.
 
 | Result (from `eval/results/`) | Value |
 |---|---|
@@ -100,7 +119,7 @@ That is 15 interaction tests and 7 axe-core WCAG A/AA checks. Design research, a
 | Double-use detection, 270 labelled pairs (OnceOnly / contract) | precision 1.000, recall 1.000 (expected by construction; see below) |
 | Same set, exact serial-string or document-hash baseline | recall 0.333 (misses every partial, contained, superset or reformatted overlap) |
 | On-chain registration gas, batch with 10 → 200 active claims | flat 301,452 (sorted interval list with O(1) hinted insert); linear v0 grows to 832,608 |
-| Deterministic serial extraction, 60 documents in 8 layouts | 65% exact; fails on tables, prose ranges and OCR errors (the AI extractor's job; not yet measured) |
+| Deterministic serial extraction, 60 synthetic snippets (real serial ranges, 8 layouts) | 65% of snippets had every serial block recovered exactly; block precision 1.00 (never invents a block), recall 0.69. It fails on tables, prose ranges and OCR errors. The optional AI extractor targets those, but it is **not measured** |
 
 The labelled pairs are synthetic claims on real registry ranges, and ground truth uses the same interval definition as the engine. These numbers show the implementation is correct and that simpler methods miss cases. They are not real-world accuracy. Details: [docs/14_evaluation_plan.md](docs/14_evaluation_plan.md).
 
