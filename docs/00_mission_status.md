@@ -1,6 +1,6 @@
 # 00 — Mission Status (single source of truth)
 
-**Updated:** 2026-10-19 18:50 IST
+**Updated:** 2026-10-19 20:05 IST
 **Deadline:** Sun 25 Oct 2026, 14:00 UTC = **19:30 IST** (verified on the Devpost overview; see doc 01 §5). **Internal submit target: Sat 24 Oct, 21:00 IST.**
 **Project:** OnceOnly — every retired tonne, claimed once. Track: Carbon Markets & Emissions Transparency.
 
@@ -15,8 +15,17 @@
 | E/F. AI + blockchain + evaluation (doc 14) | Contract and evaluation done; AI extraction implemented but **not evaluated** (no API key) |
 | G. Build: Milestones 1–4 | Verified end to end on a local chain |
 | Milestone 5: demo scenario | Five sample documents; story verified in the browser and by `make e2e` |
-| Milestone 6: hardening | Partly done (tests, e2e, secret scan). Clean-clone test pending |
-| Docs 17–22 (demo, Devpost, compliance, release) | Not started (planned D1–D4) |
+| Milestone 6: hardening | Done: tests, e2e, secret scan, fresh-clone pass, container build |
+| Submission package | Done in `docs/submission/` (Mission 04). Owner actions remain: make the repo public, final video upload, Devpost submission, licence choice, optional Render deployment |
+
+## Mission 04: final product, deployment, demo film and submission (done; `feature/submission-readiness` merged to main)
+
+- Official requirements re-verified (`docs/submission/00`). Deadline 25 Oct 2026 17:00 +03 = 19:30 IST.
+- Deployment: one Docker image (private chain, deploy, seed, API + UI) with a read-only public demo mode. Tested in isolation (29 + 1 skipped Playwright, 3.8 s boot, fingerprint identical). Render blueprint prepared, **not deployed**.
+- Demo: exact 444-word script, storyboard, checklist and fallbacks. Verified reference film (3:27, 1080p, synthetic narration) under `exports/` (not committed). `make demo-validate` replays the film: 23/23 beats, 8/8 checks.
+- Devpost copy, judge Q&A (20 questions, with circular-evaluation caveats), final QA, compliance checklist and submission runbook: `docs/submission/01–13`.
+- Fixed: the Ruler's bracket label rendered 36 px too high with motion on (overlapped the hero chip).
+- Tests: 24 backend, 24 contract, 30 Playwright; Lighthouse 96–100 / 100 / 100; fresh clone passes.
 
 ## Mission 03: critique and final polish (done; `feature/final-polish` merged to main)
 
