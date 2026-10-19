@@ -34,9 +34,9 @@
 | Verra serials parsed by our parser | 307,416 (100%) | same |
 | Verra rows where end − start + 1 = quantity | 307,416 (100%) | same |
 | Overlapping retired ranges within the same Verra batch | 0 | same |
-| Overlaps if unit numbers are (wrongly) treated as globally unique | 11,631 → namespace must include the batch | same |
+| Adjacent overlapping pairs if unit numbers are (wrongly) treated as registry-wide | 11,631, all between different batches (5,880 batches involved); artefacts of the wrong key, so the namespace must include the batch | same |
 | Verra rows with a Beneficial Owner recorded | 170,010 (55.3%); 44.7% have none | same |
 | Verra issuance rows parsed / quantity-consistent | 19,624 / 19,624 (100%) | same |
 | Gold Standard retirement rows parsed / quantity-consistent | 166,478 / 166,478 (100%) | same |
-| Gold Standard overlapping retirement pairs within a batch | 5 (inspected: mostly exact duplicate rows, one partial overlap with different dates). Reported as data inconsistencies, **not** as double retirement | same |
+| Gold Standard overlapping retirement pairs within a batch | 5 (inspected: 3 exact duplicate rows; 2 from one 10,000-unit record, batch GS1-1-VN-GS1083-4-2013-4665, whose range equals two other records combined). Reported as data inconsistencies, **not** as double retirement | same |
 | Retirements per Verra batch | median 2, p99 210, max 37,284 | same |

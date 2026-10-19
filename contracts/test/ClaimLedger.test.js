@@ -361,6 +361,8 @@ describe("ClaimLedger", function () {
       const hs = rows.slice(1).map((r) => r.hinted);
       expect(Math.max(...hs) - Math.min(...hs)).to.be.lessThan(1_000);
       expect(rows[rows.length - 1].linear).to.be.greaterThan(rows[0].linear * 2);
+      // The committed results file is regenerated only on request (make gas), so ordinary test runs leave the tree clean.
+      if (!process.env.WRITE_GAS) return;
       require("fs").mkdirSync(require("path").join(__dirname, "../../eval/results"), { recursive: true });
       require("fs").writeFileSync(require("path").join(__dirname, "../../eval/results/gas.json"), JSON.stringify({ generated_at: new Date().toISOString(), note: "Gas for registering one single-range claim into a namespace that already holds k active ranges (Hardhat, solc 0.8.24, optimizer 200).", rows }, null, 2));
       void owner;

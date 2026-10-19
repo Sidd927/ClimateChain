@@ -29,10 +29,13 @@ Status vocabulary: **Not started** · **In progress** · **Implemented** (code e
 | D-06 | Ledger filter/search/sort; intake validation + duplicate evidence; verify outcomes | Verified E2E | Playwright |
 | D-07 | Accessibility (axe A/AA clean, contrast, focus, non-colour encodings) | Tested | qa/tests/a11y.spec.ts |
 | D-08 | Visual QA across 5 viewports, fixes Q1–Q20 | Done | docs/design/07 |
-| D-09 | Screen-reader pass (VoiceOver) | Not started | Manual |
-| D-10 | Lighthouse / field performance numbers | Not started | Tool not installed |
-| D-11 | Shorten mobile landing (≈9,300 px) | Not started | |
+| D-09 | Screen-reader pass (VoiceOver) | Not started | Needs owner to run VoiceOver; accessibility-tree review done as a proxy (docs/design/10) |
+| D-10 | Lighthouse performance numbers | Done (lab) | 97–100 perf, 100 a11y/best practices on 7 pages; no field data |
+| D-11 | Shorten mobile landing (≈9,300 px) | Partly done | 6,460 px (−30%); 6,000 px target not met |
 | D-12 | Precompute contour paths at build time | Not started | 46 KB per field today |
+
+| D-13 | Mission 03 critique, hero transect, self-explaining Ruler, truth fixes | Verified E2E | docs/design/08–10; Playwright 30/30 |
+| D-14 | Keyboard-only tests, link crawl, fresh-clone test, reset/seed fingerprint | Done | `make demo-check` |
 
 ## P1: next
 

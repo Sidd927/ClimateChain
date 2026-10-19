@@ -89,71 +89,7 @@ export default function ClaimPage() {
   const statement = c.statement && c.statement !== c.period ? c.statement : null;
   const showPeriod = c.period && !(statement ?? "").startsWith(c.period);
 
-  const onChain = (
-          <section className="space-y-3 rounded-sheet border border-rule bg-sheet p-4 text-sm">
-            <h2 className="font-semibold">On-chain record</h2>
-            {c.chain_claim_id ? (
-              <>
-                <OutcomeToken outcome="anchored" />
-                <dl className="space-y-2.5">
-                  <Row k="Ledger claim">#{c.chain_claim_id}</Row>
-                  <Row k="Block">{c.block_number}{c.chain_id === 31337 && <span className="text-xs text-muted"> · local dev chain</span>}</Row>
-                  <Row k="Transaction"><CopyValue value={c.tx_hash} label="transaction hash" /></Row>
-                  <Row k="Contract"><CopyValue value={c.contract_address} label="contract address" /></Row>
-                  <Row k="Evidence commitment"><CopyValue value={c.evidence_hash} label="evidence commitment" /></Row>
-                </dl>
-                <LinkButton to={`/verify?ref=${c.ref}`} variant="secondary" className="w-full">Verify independently</LinkButton>
-              </>
-            ) : (
-              <>
-                <OutcomeToken outcome="not-established" label="Nothing on chain yet" />
-                <p className="text-xs leading-relaxed text-ink-soft">If anchored, these commitments are written to the contract. Only hashes and unit ranges go on chain; the claimant name is a salted commitment and documents stay on this server.</p>
-                <dl className="space-y-2.5">
-                  <Row k="Evidence commitment (pending)"><CopyValue value={c.evidence_hash} label="evidence commitment" /></Row>
-                  <Row k="Report hash (pending)"><CopyValue value={c.report_hash} label="report hash" /></Row>
-                </dl>
-              </>
-            )}
-            <div className="flex gap-4 border-t border-rule pt-3">
-              <a className="underline underline-offset-4" href={`/api/claims/${c.id}/report.html`} target="_blank" rel="noreferrer">Integrity report</a>
-              <a className="underline underline-offset-4" href={`/api/claims/${c.id}/report.json`}>JSON</a>
-            </div>
-          </section>
-  );
-
-  return (
-    <div className="space-y-8">
-      {/* ---------------------------------------------------------- header */}
-      <header className="space-y-4">
-        <nav aria-label="Breadcrumb" className="text-sm text-muted">
-          <ol className="flex items-center gap-1.5">
-            <li><Link viewTransition to="/claims" className="underline decoration-rule-strong underline-offset-4 hover:text-ink">Claims</Link></li>
-            <li aria-hidden>/</li>
-            <li aria-current="page" className="font-mono text-xs">{c.ref}</li>
-          </ol>
-        </nav>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <h1 className="text-[28px] leading-tight font-bold tracking-tight sm:text-[34px]">{c.claimant.replace(" (SYNTHETIC)", "")}</h1>
-          <span key={c.status} className="seal-in"><StatusPill status={c.status} size="md" /></span>
-          {c.synthetic && <SyntheticTag />}
-        </div>
-        <p className="text-sm text-ink-soft"><Mono>{c.ref}</Mono>{showPeriod && <> · {c.period}</>}{statement && <> · {statement}</>}</p>
-        <div key={v.outcome} className="seal-in flex flex-wrap items-center gap-3 rounded-panel border border-rule bg-sheet px-4 py-3">
-          <OutcomeToken outcome={v.outcome} size="md" />
-          <p className="text-[15.5px] font-medium">{v.text}</p>
-        </div>
-        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-panel border border-rule bg-rule text-sm md:grid-cols-4">
-          <Fact k="Units claimed" v={c.total_units ? fmt(c.total_units) : "None disclosed"} />
-          <Fact k="Serial blocks" v={String(c.blocks.length)} />
-          <Fact k="Registry match" v={c.blocks.length ? `${regPass} of ${c.blocks.length} confirmed` : "Not checkable"} />
-          <Fact k="Ledger" v={c.chain_claim_id ? `Claim #${c.chain_claim_id} · block ${c.block_number}` : rejections.length ? `Not anchored · ${rejections.length} rejected attempt${rejections.length > 1 ? "s" : ""}` : "Not anchored"} />
-        </dl>
-        {c.synthetic && <p className="text-xs text-muted">Synthetic demo claim: the claimant and its document are fictional; the registry records it is checked against are real public data (Berkeley VROD 2026-08, CC BY 4.0).</p>}
-      </header>
-
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_21rem]">
-        {/* ------------------------------------------------------ side panel */}
-        <aside className="order-first space-y-5 lg:order-last lg:sticky lg:top-20 lg:self-start" aria-label="Ledger">
+  const actions = (
           <section className="space-y-3 rounded-sheet border border-rule bg-sheet p-4">
             <h2 className="text-sm font-semibold">Ledger actions</h2>
             {preAnchor && (
@@ -220,6 +156,73 @@ export default function ClaimPage() {
               </div>
             )}
           </section>
+  );
+
+  const onChain = (
+          <section className="space-y-3 rounded-sheet border border-rule bg-sheet p-4 text-sm">
+            <h2 className="font-semibold">On-chain record</h2>
+            {c.chain_claim_id ? (
+              <>
+                <OutcomeToken outcome="anchored" />
+                <dl className="space-y-2.5">
+                  <Row k="Ledger claim">#{c.chain_claim_id}</Row>
+                  <Row k="Block">{c.block_number}{c.chain_id === 31337 && <span className="text-xs text-muted"> · local dev chain</span>}</Row>
+                  <Row k="Transaction"><CopyValue value={c.tx_hash} label="transaction hash" /></Row>
+                  <Row k="Contract"><CopyValue value={c.contract_address} label="contract address" /></Row>
+                  <Row k="Evidence commitment"><CopyValue value={c.evidence_hash} label="evidence commitment" /></Row>
+                </dl>
+                <LinkButton to={`/verify?ref=${c.ref}`} variant="secondary" className="w-full">Verify independently</LinkButton>
+              </>
+            ) : (
+              <>
+                <OutcomeToken outcome="not-established" label="Nothing on chain yet" />
+                <p className="text-xs leading-relaxed text-ink-soft">If anchored, these commitments are written to the contract. Only hashes and unit ranges go on chain; the claimant name is a salted commitment and documents stay on this server.</p>
+                <dl className="space-y-2.5">
+                  <Row k="Evidence commitment (pending)"><CopyValue value={c.evidence_hash} label="evidence commitment" /></Row>
+                  <Row k="Report hash (pending)"><CopyValue value={c.report_hash} label="report hash" /></Row>
+                </dl>
+              </>
+            )}
+            <div className="flex gap-4 border-t border-rule pt-3">
+              <a className="underline underline-offset-4" href={`/api/claims/${c.id}/report.html`} target="_blank" rel="noreferrer">Integrity report</a>
+              <a className="underline underline-offset-4" href={`/api/claims/${c.id}/report.json`}>JSON</a>
+            </div>
+          </section>
+  );
+
+  return (
+    <div className="space-y-8">
+      {/* ---------------------------------------------------------- header */}
+      <header className="space-y-4">
+        <nav aria-label="Breadcrumb" className="text-sm text-muted">
+          <ol className="flex items-center gap-1.5">
+            <li><Link viewTransition to="/claims" className="underline decoration-rule-strong underline-offset-4 hover:text-ink">Claims</Link></li>
+            <li aria-hidden>/</li>
+            <li aria-current="page" className="font-mono text-xs">{c.ref}</li>
+          </ol>
+        </nav>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <h1 className="text-[28px] leading-tight font-bold tracking-tight sm:text-[34px]">{c.claimant.replace(" (SYNTHETIC)", "")}</h1>
+          <span key={c.status} className="seal-in"><StatusPill status={c.status} size="md" /></span>
+          {c.synthetic && <span className="inline-flex items-center gap-2"><SyntheticTag /><span className="text-xs text-muted">fictional claimant and document; registry records are real (Berkeley VROD 2026-08)</span></span>}
+        </div>
+        <p className="text-sm text-ink-soft"><Mono>{c.ref}</Mono>{showPeriod && <> · {c.period}</>}{statement && <> · {statement}</>}</p>
+        <div key={v.outcome} className="seal-in flex flex-wrap items-center gap-3 rounded-panel border border-rule bg-sheet px-4 py-3">
+          <OutcomeToken outcome={v.outcome} size="md" />
+          <p className="text-[15.5px] font-medium">{v.text}</p>
+        </div>
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-panel border border-rule bg-rule text-sm md:grid-cols-4">
+          <Fact k="Units claimed" v={c.total_units ? fmt(c.total_units) : "None disclosed"} />
+          <Fact k="Serial blocks" v={String(c.blocks.length)} />
+          <Fact k="Registry match" v={c.blocks.length ? `${regPass} of ${c.blocks.length} confirmed` : "Not checkable"} />
+          <Fact k="Ledger" v={c.chain_claim_id ? `Claim #${c.chain_claim_id} · block ${c.block_number}` : rejections.length ? `Not anchored · ${rejections.length} rejected attempt${rejections.length > 1 ? "s" : ""}` : "Not anchored"} />
+        </dl>
+      </header>
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_21rem]">
+        {/* ------------------------------------------------------ side panel */}
+        <aside className="hidden space-y-5 lg:sticky lg:top-20 lg:order-last lg:block lg:self-start" aria-label="Ledger">
+          <div className="hidden lg:block">{actions}</div>
 
           <div className="hidden lg:block">{onChain}</div>
         </aside>
@@ -256,6 +259,8 @@ export default function ClaimPage() {
             )}
           </section>
 
+          <div className="lg:hidden">{actions}</div>
+
           <section aria-labelledby="prov-h">
             <SectionHeader id="prov-h" title="Provenance" aside="From document to ledger" />
             <Provenance c={c} />
@@ -278,7 +283,7 @@ export default function ClaimPage() {
                   <div className="mt-2 text-xs text-muted">SHA-256 fingerprint</div>
                   <CopyValue value={e.sha256} label="SHA-256" />
                   <Disclosure summary="Extracted text" className="mt-2">
-                    <pre className="max-h-64 overflow-auto rounded-[6px] bg-fog p-3 font-mono text-[11.5px] leading-relaxed whitespace-pre-wrap">{e.text_excerpt}</pre>
+                    <pre className="max-h-64 overflow-auto rounded-[6px] bg-fog p-3 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap">{e.text_excerpt}</pre>
                   </Disclosure>
                 </div>
               ))}

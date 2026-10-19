@@ -1,6 +1,6 @@
 # 00 — Mission Status (single source of truth)
 
-**Updated:** 2026-10-19 15:45 IST
+**Updated:** 2026-10-19 18:50 IST
 **Deadline:** Sun 25 Oct 2026, 14:00 UTC = **19:30 IST** (verified on the Devpost overview; see doc 01 §5). **Internal submit target: Sat 24 Oct, 21:00 IST.**
 **Project:** OnceOnly — every retired tonne, claimed once. Track: Carbon Markets & Emissions Transparency.
 
@@ -17,6 +17,14 @@
 | Milestone 5: demo scenario | Five sample documents; story verified in the browser and by `make e2e` |
 | Milestone 6: hardening | Partly done (tests, e2e, secret scan). Clean-clone test pending |
 | Docs 17–22 (demo, Devpost, compliance, release) | Not started (planned D1–D4) |
+
+## Mission 03: critique and final polish (done; `feature/final-polish` merged to main)
+
+- Critique with scored areas and the 10 most consequential issues: `docs/design/08`. Changes and before/after: `docs/design/09`. Final QA: `docs/design/10`.
+- The hero is now an annotated, full-width Ruler transect; the Ruler shows the overlap, boundaries and linked highlights on the instrument itself.
+- Landing page shortened by 30% on mobile without removing evidence. Imprecise figures (11,631; Gold Standard pairs) corrected everywhere.
+- Fixed defects found by new checks: dropped keystrokes in ledger search; claim-detail CLS 0.916 → 0; illegible small text; accessibility-tree issues; tests dirtying the tree.
+- Tests: 22 backend, 24 contract, 30 Playwright (incl. keyboard-only, link crawl, axe). Lighthouse 97–100 performance and 100 accessibility on every audited page. Reset and seed reproducible (identical fingerprint ×3). Fresh clone passes.
 
 ## Mission 02 — product redesign (done, on `feature/frontend-redesign` → main)
 
@@ -42,7 +50,7 @@
 | `make test-contracts` | 24 passing (incl. adversarial-hint property test, gas benchmark) |
 | `make test-backend` | 22 passing |
 | `make e2e` | 13/13 checks passing |
-| `cd frontend && npx playwright test` | 22 passing (15 interaction + 7 axe WCAG A/AA) |
+| `cd frontend && npx playwright test` | 30 passing (18 interaction + 4 keyboard + 1 link crawl + 7 axe WCAG A/AA) |
 | `make eval` | 270 pairs: OnceOnly and contract P=R=1.000; baseline recall 0.333; batch-blind ablation 30 FP. Parser extraction 65% exact docs |
 
 ## Known failures and gaps

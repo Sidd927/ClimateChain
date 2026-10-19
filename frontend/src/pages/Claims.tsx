@@ -19,7 +19,9 @@ export default function Claims() {
   const [rows, setRows] = useState<ClaimSummary[] | null>(null);
   const [err, setErr] = useState<unknown>(null);
   const [params, setParams] = useSearchParams();
-  const q = params.get("q") ?? "";
+  // The search box owns its text locally (URL updates commit asynchronously, so a URL-controlled
+  // input drops keystrokes); the URL mirrors it for shareable links and back/forward.
+  const [q, setQ] = useState(() => params.get("q") ?? "");
   const filter = params.get("status") ?? "all";
   const sort = (params.get("sort") as SortKey) ?? "ref";
   const dir = params.get("dir") === "asc" ? "asc" : "desc";
@@ -106,7 +108,7 @@ export default function Claims() {
           <label className="relative block md:w-72">
             <span className="sr-only">Search claims</span>
             <Search size={15} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted" aria-hidden />
-            <input type="search" value={q} onChange={(e) => set("q", e.target.value)} placeholder="Search reference or claimant" className="w-full rounded-[7px] border border-rule-strong bg-sheet py-2 pr-3 pl-9 text-sm" />
+            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); set("q", e.target.value); }} placeholder="Search reference or claimant" className="w-full rounded-[7px] border border-rule-strong bg-sheet py-2 pr-3 pl-9 text-sm" />
           </label>
         </div>
       )}
@@ -123,7 +125,7 @@ export default function Claims() {
 
       {rows && rows.length > 0 && shown.length === 0 && (
         <div className="rounded-sheet border border-dashed border-rule-strong bg-sheet p-8 text-center text-sm text-ink-soft">
-          No claims match {q ? <>“{q}”</> : "this filter"}. <button type="button" className="font-semibold underline" onClick={() => setParams(new URLSearchParams(), { replace: true })}>Clear filters</button>
+          No claims match {q ? <>“{q}”</> : "this filter"}. <button type="button" className="font-semibold underline" onClick={() => { setQ(""); setParams(new URLSearchParams(), { replace: true }); }}>Clear filters</button>
         </div>
       )}
 

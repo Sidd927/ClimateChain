@@ -49,7 +49,7 @@
 
 /* -------------------------------------------------------------------- base */
 @layer base {
-html { background: var(--color-fog); color: var(--color-ink); }
+html { background: var(--color-fog); color: var(--color-ink); scrollbar-gutter: stable; }
 body {
   font-family: var(--font-sans);
   font-feature-settings: "tnum" 1;
