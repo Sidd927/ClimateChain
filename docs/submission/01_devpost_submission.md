@@ -85,7 +85,7 @@ Double counting is usually described in three forms: double issuance, double cla
 
 ## Accomplishments that we're proud of
 - The rule is enforced by the contract itself. You can bypass the UI and send the registration straight to the chain; it still refuses.
-- Every number in the demo is real registry data or a live transaction, never a mock-up.
+- The demo runs on real registry records and real (local-chain) transactions. The only invented parts are the claimant companies and their statements, and the app labels them SYNTHETIC.
 - One command resets the demo to a byte-identical state (checked by fingerprint).
 
 ## What we learned

@@ -86,7 +86,7 @@ Ground rule: if it isn't implemented or measured, we say so.
 **Short:** Active ranges in a batch never overlap, so they form a sorted chain of disjoint intervals. Inserting a new one only needs its two neighbours checked. With an off-chain hint, that's constant work on chain, so gas stays flat as the ledger grows: 301,452 gas with 10 or 200 existing claims, versus 832,608 for a linear scan at 200.
 
 **Deep:**
-- Alternatives considered: an interval tree (O(log n) on chain, but complex and more storage writes) and per-unit bitmaps (impossible at unit numbers near 10⁹).
+- Alternatives (our reasoning; not separately prototyped): an interval tree (O(log n) on chain, but complex and more storage writes) and per-unit bitmaps (impossible at unit numbers near 10⁹).
 - A doubly-linked list gives O(1) unlinking on withdraw or revoke.
 - The off-chain hint lookup is an O(k) view call, free for the caller.
 - With 0 existing claims, registration costs 333,078 gas: first writes to fresh storage cost more.

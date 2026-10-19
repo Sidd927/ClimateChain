@@ -8,6 +8,8 @@ Requirements come from `00_official_requirements.md` (Devpost overview, rules an
 - **Owner:** needs the owner's decision or approval.
 - **Confirm:** must be checked in the signed-in Devpost form.
 
+**Mandatory vs recommended.** Items 1–6 are the mandatory official requirements: deadline, track, description, 3–5 minute video, GitHub link, and a working prototype or proof of concept. The rules page says "a link to your GitHub repo (or equivalent)"; only the overview says **public**. A private link can't be opened by judges, so treat public as mandatory. Items 7–11 are the judging criteria. Items 12–19 are optional, recommended or to confirm in the form.
+
 | # | Official requirement | Evidence in this repo | Status | Remaining action |
 |---|---|---|---|---|
 | 1 | Submit before **25 Oct 2026, 17:00 +03** (14:00 UTC, 19:30 IST) | Schedule page, quoted in `00_official_requirements.md` | Owner | Submit by **24 Oct** to leave a day of margin |
