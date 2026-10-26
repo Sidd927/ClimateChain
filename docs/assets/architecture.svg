@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="t d">
+  <title id="t">OnceOnly architecture: browser, off-chain FastAPI backend, on-chain ClaimLedger</title>
+  <desc id="d">The React and Vite UI talks to a FastAPI backend. The backend ingests evidence and hashes it with SHA-256, extracts serial numbers with a deterministic parser and an optional Claude pass, runs the rules engine against a SQLite registry reference built from Berkeley VROD, stores claims, findings and audit events in SQLite, and uses web3.py to call the ClaimLedger smart contract on a local Hardhat chain. The contract keys ranges by keccak of registry and batch, keeps a sorted list of active ranges per namespace, and reverts with RangeOverlap on any shared unit.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#6cc496"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f08a8f"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8fb0aa"/></marker>
+  </defs>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .zt { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; }
+    .h { fill: #ffffff; font-size: 15px; font-weight: 700; }
+    .b { fill: #c8dad6; font-size: 12.5px; }
+    .box { fill: #123536; stroke: #2b5a59; stroke-width: 1.2; }
+  </style>
+  <rect width="1200" height="660" rx="18" fill="#0e2a2b"/>
+  <text x="32" y="46" fill="#ffffff" font-size="24" font-weight="700">System architecture</text>
+  <text x="32" y="72" fill="#a9c4bf" font-size="14">Checks run off-chain and are explained; the non-overlap invariant is enforced on-chain, where no interface can bypass it.</text>
+
+  <!-- zones -->
+  <rect x="24" y="96" width="220" height="330" rx="14" fill="none" stroke="#3f6f6e" stroke-dasharray="5 5"/>
+  <text x="42" y="122" fill="#8fb0aa" class="zt">BROWSER</text>
+  <rect x="24" y="442" width="220" height="196" rx="14" fill="none" stroke="#3f6f6e" stroke-dasharray="5 5"/>
+  <text x="42" y="468" fill="#8fb0aa" class="zt">EXTERNAL INPUTS</text>
+  <rect x="264" y="96" width="608" height="542" rx="14" fill="#0b2223" stroke="#3f6f6e"/>
+  <text x="282" y="122" fill="#6cc496" class="zt">OFF-CHAIN · FASTAPI BACKEND (PYTHON)</text>
+  <rect x="892" y="96" width="284" height="542" rx="14" fill="#10302a" stroke="#2e8a5c" stroke-width="1.5"/>
+  <text x="910" y="122" fill="#6cc496" class="zt">ON-CHAIN · LOCAL HARDHAT (31337)</text>
+
+  <!-- browser -->
+  <rect class="box" x="40" y="140" width="188" height="270" rx="10"/>
+  <text class="h" x="56" y="168">React 19 + Vite UI</text>
+  <text class="b" x="56" y="194">Story · Overview</text>
+  <text class="b" x="56" y="214">Check a claim</text>
+  <text class="b" x="56" y="234">Claim detail + Ruler</text>
+  <text class="b" x="56" y="254">Verify · Evidence</text>
+  <line x1="56" y1="272" x2="212" y2="272" stroke="#2b5a59"/>
+  <text class="b" x="56" y="296">SHA-256 of each file</text>
+  <text class="b" x="56" y="314">computed in the browser</text>
+  <text class="b" x="56" y="340">Interval overlap drawn</text>
+  <text class="b" x="56" y="358">per registry batch</text>
+  <text class="b" x="56" y="384" fill="#e8c46a">Synthetic data labelled</text>
+
+  <!-- external -->
+  <rect class="box" x="40" y="484" width="188" height="66" rx="10"/>
+  <text class="h" x="56" y="508" font-size="13.5">Berkeley VROD 2026-08</text>
+  <text class="b" x="56" y="528">Verra + Gold Standard, CC BY 4.0</text>
+  <text class="b" x="56" y="543" font-size="11.5">→ registry reference</text>
+  <rect x="40" y="562" width="188" height="62" rx="10" fill="none" stroke="#5b7f7b" stroke-dasharray="4 4"/>
+  <text class="h" x="56" y="586" font-size="13.5">Anthropic API</text>
+  <text class="b" x="56" y="606" font-size="11.5">→ extraction (optional key)</text>
+
+  <!-- API bar -->
+  <rect x="282" y="138" width="572" height="44" rx="10" fill="#174445" stroke="#2e8a5c"/>
+  <text x="300" y="166" fill="#ffffff" font-size="14" font-weight="700">REST /api/*</text>
+  <text x="396" y="166" fill="#c8dad6" font-size="12.5" class="mono">claims · anchor · challenge · resolve · verify · report</text>
+  <path d="M228 170 H280" stroke="#6cc496" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)" fill="none"/>
+
+  <!-- pipeline row 1 -->
+  <rect class="box" x="282" y="206" width="270" height="96" rx="10"/>
+  <text class="h" x="298" y="232">1 · Evidence ingestion</text>
+  <text class="b" x="298" y="256">PDF / TXT / pasted text → text (pypdf)</text>
+  <text class="b" x="298" y="276">SHA-256 of raw bytes; evidence is</text>
+  <text class="b" x="298" y="294">content-addressed, never on chain</text>
+  <rect class="box" x="584" y="206" width="270" height="96" rx="10"/>
+  <text class="h" x="600" y="232">2 · Serial extraction</text>
+  <text class="b" x="600" y="256">Deterministic registry regex parser</text>
+  <text class="b" x="600" y="276">+ optional Claude structured output,</text>
+  <text class="b" x="600" y="294">re-parsed and cross-checked</text>
+  <path d="M552 254 H580" stroke="#6cc496" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M640 302 V314 H420 V322" stroke="#6cc496" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- pipeline row 2 -->
+  <rect class="box" x="282" y="326" width="270" height="120" rx="10"/>
+  <text class="h" x="298" y="352">3 · Rules engine</text>
+  <text class="b" x="298" y="376">Batch-aware interval overlap (DUP)</text>
+  <text class="b" x="298" y="396">Registry match · beneficiary · totals</text>
+  <text class="b mono" x="298" y="416" font-size="11">SER REG BEN DUP AGG EVD EXT</text>
+  <text class="b" x="298" y="436">Each finding states its uncertainty</text>
+  <rect class="box" x="584" y="326" width="270" height="120" rx="10"/>
+  <text class="h" x="600" y="352">4 · Chain adapter (web3.py)</text>
+  <text class="b mono" x="600" y="376" font-size="12">checkRange()</text>
+  <text class="b" x="700" y="376">pre-flight</text>
+  <text class="b mono" x="600" y="396" font-size="12">registerClaim()</text>
+  <text class="b" x="722" y="396">with sort hints</text>
+  <text class="b" x="600" y="416">Decodes custom errors into</text>
+  <text class="b" x="600" y="436">audit events with tx hash</text>
+  <path d="M552 386 H580" stroke="#6cc496" stroke-width="2" marker-end="url(#a)"/>
+  <text x="566" y="378" fill="#8fb0aa" font-size="10.5" text-anchor="middle">pass</text>
+
+  <!-- stores -->
+  <rect x="282" y="476" width="180" height="140" rx="10" fill="#0f2f30" stroke="#2b5a59"/>
+  <text class="h" x="296" y="500" font-size="13.5">Registry reference</text>
+  <text class="b" x="296" y="522">SQLite, built by</text>
+  <text class="b mono" x="296" y="540" font-size="11">build_reference.py</text>
+  <text class="b" x="296" y="562">493,518 registry rows</text>
+  <text class="b" x="296" y="580">(full build); 38k-row</text>
+  <text class="b" x="296" y="598">demo subset in repo</text>
+  <rect x="478" y="476" width="180" height="140" rx="10" fill="#0f2f30" stroke="#2b5a59"/>
+  <text class="h" x="492" y="500" font-size="13.5">App database</text>
+  <text class="b" x="492" y="522">SQLite: claims, unit</text>
+  <text class="b" x="492" y="540">ranges, findings and</text>
+  <text class="b" x="492" y="558">off-chain audit events</text>
+  <text class="b" x="492" y="584" fill="#e8c46a">Mirror only; chain is</text>
+  <text class="b" x="492" y="602" fill="#e8c46a">authoritative for state</text>
+  <rect x="674" y="476" width="180" height="140" rx="10" fill="#0f2f30" stroke="#2b5a59"/>
+  <text class="h" x="688" y="500" font-size="13.5">Evidence store</text>
+  <text class="b mono" x="688" y="522" font-size="11">var/evidence/&lt;sha256&gt;</text>
+  <text class="b" x="688" y="548">Files stay on this</text>
+  <text class="b" x="688" y="566">server; only hashes</text>
+  <text class="b" x="688" y="584">are committed</text>
+  <path d="M372 446 V472" stroke="#8fb0aa" stroke-width="1.4" marker-end="url(#g)"/>
+  <path d="M520 446 V472" stroke="#8fb0aa" stroke-width="1.4" marker-end="url(#g)"/>
+  <path d="M640 446 V472" stroke="#8fb0aa" stroke-width="1.4" marker-end="url(#g)"/>
+
+  <!-- contract -->
+  <rect x="908" y="138" width="252" height="484" rx="12" fill="#123a30" stroke="#2e8a5c" stroke-width="1.5"/>
+  <text x="926" y="166" fill="#ffffff" font-size="16" font-weight="700">ClaimLedger.sol</text>
+  <text class="b" x="926" y="186" font-size="11.5">Solidity 0.8.24</text>
+  <text x="926" y="218" fill="#6cc496" font-size="12" font-weight="700">NAMESPACE</text>
+  <text class="b mono" x="926" y="238" font-size="12">keccak("registry:batch")</text>
+  <text class="b" x="926" y="256">Serials repeat across batches,</text>
+  <text class="b" x="926" y="274">so the batch is part of the key</text>
+  <text x="926" y="306" fill="#6cc496" font-size="12" font-weight="700">INVARIANT</text>
+  <text class="b" x="926" y="326">Sorted linked list of active</text>
+  <text class="b" x="926" y="344">ranges per namespace. Insert</text>
+  <text class="b" x="926" y="362">checks only predecessor and</text>
+  <text class="b" x="926" y="380">successor: O(1) with a hint</text>
+  <rect x="926" y="394" width="218" height="30" rx="6" fill="#3a1d21" stroke="#7a3a40"/>
+  <text x="936" y="414" fill="#f5c9cc" font-size="12.5" class="mono">revert RangeOverlap(…)</text>
+  <text x="926" y="456" fill="#6cc496" font-size="12" font-weight="700">STORED ON CHAIN</text>
+  <text class="b" x="926" y="476">Unit ranges · evidence hash</text>
+  <text class="b" x="926" y="494">report hash · salted claimant</text>
+  <text class="b" x="926" y="512">commitment · status</text>
+  <text x="926" y="544" fill="#6cc496" font-size="12" font-weight="700">LIFECYCLE</text>
+  <text class="b" x="926" y="564">Challenge → uphold (releases</text>
+  <text class="b" x="926" y="582">units) or dismiss · withdraw</text>
+  <text class="b" x="926" y="606" fill="#e8c46a">Local dev chain, not a public network</text>
+
+  <!-- adapter <-> contract -->
+  <path d="M854 368 H904" stroke="#6cc496" stroke-width="2" marker-end="url(#a)"/>
+  <text x="879" y="360" fill="#6cc496" font-size="10.5" text-anchor="middle">tx</text>
+  <path d="M904 410 H858" stroke="#f08a8f" stroke-width="1.6" marker-end="url(#r)"/>
+  <text x="881" y="428" fill="#f08a8f" font-size="10.5" text-anchor="middle">revert</text>
+</svg>

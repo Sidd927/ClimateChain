@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" role="img" aria-labelledby="t d">
+  <title id="t">Evaluation: detection on 270 synthetic claim pairs, and registration gas</title>
+  <desc id="d">Left: precision and recall on 270 labelled synthetic claim pairs. OnceOnly rules engine and ClaimLedger contract: precision 1.000, recall 1.000. Exact serial string or document hash baseline: precision 1.000, recall 0.333. Interval overlap ignoring batch: precision 0.857, recall 1.000. Right: gas to register one range into a namespace holding 0, 10, 50 or 200 active ranges. Hinted sorted list: 333,078 then flat 301,452. Linear scan: 304,108, 314,288, 423,408, 832,608.</desc>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .lab { fill: #ffffff; font-size: 14px; font-weight: 600; }
+    .sub { fill: #8fb0aa; font-size: 12px; }
+    .val { fill: #d6e4e1; font-size: 12.5px; }
+  </style>
+  <rect width="1200" height="470" rx="18" fill="#0e2a2b"/>
+
+  <!-- left panel -->
+  <text x="40" y="48" fill="#ffffff" font-size="20" font-weight="700">Double-use detection · 270 synthetic pairs</text>
+  <text x="40" y="72" fill="#a9c4bf" font-size="13">Real Verra ranges, synthetic claimants, labels by construction</text>
+  <g transform="translate(0,0)">
+    <rect x="300" y="96" width="12" height="12" rx="2" fill="#2e8a5c"/><text x="318" y="107" class="sub">precision</text>
+    <rect x="390" y="96" width="12" height="12" rx="2" fill="#a9d9c0"/><text x="408" y="107" class="sub">recall</text>
+  </g>
+  <!-- axis x from 250 to 550 = 0..1 -->
+  <g stroke="#244f4f">
+    <line x1="250" y1="122" x2="250" y2="418"/><line x1="400" y1="122" x2="400" y2="418" stroke-dasharray="3 4"/><line x1="550" y1="122" x2="550" y2="418" stroke-dasharray="3 4"/>
+  </g>
+  <text x="250" y="436" class="sub" text-anchor="middle">0</text><text x="400" y="436" class="sub" text-anchor="middle">0.5</text><text x="550" y="436" class="sub" text-anchor="middle">1.0</text>
+
+  <text x="236" y="146" class="lab" text-anchor="end">OnceOnly rules engine</text>
+  <text x="236" y="163" class="sub" text-anchor="end">DUP-001 / DUP-002</text>
+  <rect x="250" y="134" width="300" height="16" rx="2" fill="#2e8a5c"/><rect x="250" y="152" width="300" height="16" rx="2" fill="#a9d9c0"/>
+  <text x="556" y="147" class="val">1.000</text><text x="556" y="165" class="val">1.000</text>
+
+  <text x="236" y="216" class="lab" text-anchor="end">ClaimLedger contract</text>
+  <text x="236" y="233" class="sub" text-anchor="end">revert on 2nd registration</text>
+  <rect x="250" y="204" width="300" height="16" rx="2" fill="#2e8a5c"/><rect x="250" y="222" width="300" height="16" rx="2" fill="#a9d9c0"/>
+  <text x="556" y="217" class="val">1.000</text><text x="556" y="235" class="val">1.000</text>
+
+  <text x="236" y="286" class="lab" text-anchor="end">Exact string / file hash</text>
+  <text x="236" y="303" class="sub" text-anchor="end">baseline</text>
+  <rect x="250" y="274" width="300" height="16" rx="2" fill="#2e8a5c"/><rect x="250" y="292" width="99.9" height="16" rx="2" fill="#f08a8f"/>
+  <text x="556" y="287" class="val">1.000</text><text x="356" y="305" fill="#f08a8f" font-size="12.5" font-weight="700">0.333 · misses 120 of 180</text>
+
+  <text x="236" y="356" class="lab" text-anchor="end">Interval, batch ignored</text>
+  <text x="236" y="373" class="sub" text-anchor="end">ablation</text>
+  <rect x="250" y="344" width="257.1" height="16" rx="2" fill="#e8c46a"/><rect x="250" y="362" width="300" height="16" rx="2" fill="#a9d9c0"/>
+  <text x="513" y="357" fill="#e8c46a" font-size="12.5" font-weight="700">0.857</text><text x="556" y="375" class="val">1.000</text>
+  <text x="40" y="456" fill="#8fb0aa" font-size="12">Perfect scores are expected by construction: they show the logic is correct, not real-world accuracy.</text>
+
+  <!-- divider -->
+  <line x1="620" y1="36" x2="620" y2="440" stroke="#244f4f"/>
+
+  <!-- right panel -->
+  <text x="660" y="48" fill="#ffffff" font-size="20" font-weight="700">Registration gas vs. active ranges</text>
+  <text x="660" y="72" fill="#a9c4bf" font-size="13">One single-range claim · Hardhat · solc 0.8.24, optimizer 200</text>
+  <g stroke="#244f4f">
+    <line x1="700" y1="380" x2="1140" y2="380"/>
+    <line x1="700" y1="296.7" x2="1140" y2="296.7" stroke-dasharray="3 4"/>
+    <line x1="700" y1="213.3" x2="1140" y2="213.3" stroke-dasharray="3 4"/>
+    <line x1="700" y1="130" x2="1140" y2="130" stroke-dasharray="3 4"/>
+  </g>
+  <g class="sub" text-anchor="end">
+    <text x="692" y="384">0</text><text x="692" y="301">300k</text><text x="692" y="218">600k</text><text x="692" y="134">900k</text>
+  </g>
+  <g class="sub" text-anchor="middle">
+    <text x="720" y="400">0</text><text x="853" y="400">10</text><text x="987" y="400">50</text><text x="1120" y="400">200</text>
+    <text x="920" y="422">active ranges already in the batch namespace</text>
+  </g>
+  <!-- linear -->
+  <polyline points="720,295.5 853,292.7 987,262.4 1120,148.7" fill="none" stroke="#f08a8f" stroke-width="2.5"/>
+  <g fill="#f08a8f"><circle cx="720" cy="295.5" r="4"/><circle cx="853" cy="292.7" r="4"/><circle cx="987" cy="262.4" r="4"/><circle cx="1120" cy="148.7" r="4"/></g>
+  <text x="1112" y="138" fill="#f08a8f" font-size="13" font-weight="700" text-anchor="end">linear scan · 832,608</text>
+  <!-- hinted -->
+  <polyline points="720,287.5 853,296.3 987,296.3 1120,296.3" fill="none" stroke="#6cc496" stroke-width="2.5"/>
+  <g fill="#6cc496"><circle cx="720" cy="287.5" r="4"/><circle cx="853" cy="296.3" r="4"/><circle cx="987" cy="296.3" r="4"/><circle cx="1120" cy="296.3" r="4"/></g>
+  <text x="1120" y="322" fill="#6cc496" font-size="13" font-weight="700" text-anchor="end">hinted sorted list · flat 301,452</text>
+  <text x="660" y="456" fill="#8fb0aa" font-size="12">Source: eval/results/gas.json (make gas). Linear = v0 benchmark contract.</text>
+</svg>
